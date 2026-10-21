@@ -34,6 +34,12 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: doppleja-v1-api
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      DB_HOST: db
+      
     ports:
       - "127.0.0.1:8001:8000"
     volumes:
@@ -48,6 +54,8 @@ services:
       - --reload
       - --reload-dir
       - /code/backend
+    
+    
     depends_on:
       db:
         condition: service_healthy
