@@ -34,6 +34,7 @@ class JobOut(JobInput):
     model_config = ConfigDict(from_attributes=True)
     id: UUID
     employer_id: UUID
+    archived_at: datetime | None = None
     created_at: datetime
 
 class CategoryOut(BaseModel):

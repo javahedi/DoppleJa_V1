@@ -1,4 +1,7 @@
 from uuid import UUID
+from datetime import datetime, timezone
+from typing import Literal
+from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -46,7 +49,7 @@ def discover_jobs(
     user: User = Depends(require_worker),
     db: Session = Depends(get_db),
 ):
-    query = select(Job).where(Job.is_active.is_(True))
+    query = select(Job).where(Job.is_active.is_(True), Job.archived_at.is_(None))
     if city:
         query = query.where(Job.city.ilike(city.strip()))
     if category_id is not None:
@@ -56,7 +59,7 @@ def discover_jobs(
 @router.get('/jobs/{job_id}', response_model=JobOut)
 def job_details(job_id: UUID, user: User = Depends(current_user), db: Session = Depends(get_db)):
     job = db.get(Job, job_id)
-    if job is None or (not job.is_active and job.employer_id != user.id):
+    if job is None or ((not job.is_active or job.archived_at is not None) and job.employer_id != user.id):
         raise HTTPException(404, 'Job not found')
     return job
 
@@ -65,10 +68,34 @@ def update_job(job_id: UUID, body: JobInput, user: User = Depends(require_employ
     job = db.get(Job, job_id)
     if job is None or job.employer_id != user.id:
         raise HTTPException(404, 'Job not found')
+    if job.archived_at is not None:
+        raise HTTPException(409, 'Archived jobs cannot be edited')
     if db.get(JobCategory, body.category_id) is None:
         raise HTTPException(422, 'Unknown job category')
     for field, value in body.model_dump().items():
         setattr(job, field, value)
+    db.commit()
+    db.refresh(job)
+    return job
+
+
+class JobStatusAction(BaseModel):
+    action: Literal['pause', 'reactivate', 'archive']
+
+
+@router.patch('/jobs/{job_id}/status', response_model=JobOut)
+def change_job_status(job_id: UUID, body: JobStatusAction,
+                      user: User = Depends(require_employer), db: Session = Depends(get_db)):
+    job = db.get(Job, job_id)
+    if job is None or job.employer_id != user.id:
+        raise HTTPException(404, 'Job not found')
+    if job.archived_at is not None:
+        raise HTTPException(409, 'Archived jobs cannot be changed')
+    if body.action == 'archive':
+        job.archived_at = datetime.now(timezone.utc)
+        job.is_active = False
+    else:
+        job.is_active = body.action == 'reactivate'
     db.commit()
     db.refresh(job)
     return job

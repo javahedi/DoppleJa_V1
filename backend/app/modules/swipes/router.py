@@ -19,7 +19,7 @@ def discover_jobs(city: str | None = Query(None, max_length=100),
     if user.role != 'worker':
         raise HTTPException(403, 'Worker account required')
     already_swiped = select(Swipe.job_id).where(Swipe.worker_id == user.id, Swipe.actor_role == 'worker')
-    query = select(Job).where(Job.is_active.is_(True), Job.id.not_in(already_swiped))
+    query = select(Job).where(Job.is_active.is_(True), Job.archived_at.is_(None), Job.id.not_in(already_swiped))
     if city:
         query = query.where(Job.city.ilike(city.strip()))
     if category_id is not None:
@@ -33,7 +33,7 @@ def discover_workers(job_id: UUID, user: User = Depends(current_user), db: Sessi
     job = db.get(Job, job_id)
     if job is None or job.employer_id != user.id:
         raise HTTPException(404, 'Job not found')
-    if not job.is_active:
+    if not job.is_active or job.archived_at is not None:
         raise HTTPException(409, 'Job is inactive')
     already_swiped = select(Swipe.worker_id).where(Swipe.job_id == job_id, Swipe.actor_role == 'employer')
     query = select(WorkerProfile).where(WorkerProfile.user_id.not_in(already_swiped))
@@ -42,7 +42,7 @@ def discover_workers(job_id: UUID, user: User = Depends(current_user), db: Sessi
 @router.post('/swipes', response_model=SwipeOut, status_code=201)
 def swipe(body: SwipeInput, user: User = Depends(current_user), db: Session = Depends(get_db)):
     job = db.get(Job, body.job_id)
-    if job is None or not job.is_active:
+    if job is None or not job.is_active or job.archived_at is not None:
         raise HTTPException(404, 'Active job not found')
     if user.role == 'worker':
         if body.worker_id is not None and body.worker_id != user.id:

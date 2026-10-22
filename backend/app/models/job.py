@@ -31,4 +31,5 @@ class Job(Base):
     hourly_pay_min: Mapped[Decimal | None] = mapped_column(Numeric(8, 2))
     hourly_pay_max: Mapped[Decimal | None] = mapped_column(Numeric(8, 2))
     is_active: Mapped[bool] = mapped_column(Boolean, server_default='true', default=True, nullable=False)
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
