@@ -10,8 +10,14 @@ from backend.app.modules.matching.router import router as matching_router
 from backend.app.modules.chat.router import router as chat_router
 from backend.app.modules.chat.realtime import router as realtime_router
 
+from backend.app.modules.likes.router import router as likes_router
+
+from backend.app.modules.match_summaries.router import router as match_summaries_router
+
 app = FastAPI(title="DoppleJa API", description="Two sides. Two Yes. One Match.", version="1.0.0")
 app.include_router(auth_router)
+app.include_router(match_summaries_router)
+app.include_router(likes_router)
 app.include_router(workers_router)
 app.include_router(employers_router)
 app.include_router(jobs_router)

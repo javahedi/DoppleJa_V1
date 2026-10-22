@@ -3,3 +3,6 @@
 
 /* Phase 5.1A — Employer job management */
 .manage-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:17px;margin:12px 0;box-shadow:0 5px 15px #2110440a}.manage-card strong{font-size:15px}.manage-card .desc{margin:10px 0 14px}.job-controls{display:flex;gap:7px;flex-wrap:wrap}.job-controls .btn{flex:1 1 auto}.job-controls .archive-btn{background:#fff1f3;color:#ab2943}.job-status{border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;white-space:nowrap}.job-status.active{background:#e5f9f0;color:#11764c}.job-status.paused{background:#fff1db;color:#89550b}.job-status.archived{background:#f0f0f3;color:#666579}
+
+/* Phase 5.1B: liked-job history */
+.likes-legend{margin:13px 0 18px}.likes-legend .chip{font-weight:650}.manage-card .pay{font-size:14px;margin-top:8px}

@@ -10,5 +10,6 @@ def test_frontend_assets_present():
     assert '/api/auth/login' in js
     assert '/api/discovery/jobs' in js
     assert '/api/swipes' in js
-    assert '/api/chats' in js
+    assert '/api/match-summaries' in js
+    assert '/api/matches/' in js
     assert '/ws/matches/' in js
