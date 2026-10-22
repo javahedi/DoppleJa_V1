@@ -64,4 +64,6 @@ def send_message(match_id: UUID, body: MessageCreate,
     db.add(message)
     db.commit()
     db.refresh(message)
+    from backend.app.modules.chat.realtime import hub
+    hub.publish(match_id, {"type": "message", "message": MessageOut.model_validate(message).model_dump(mode="json")})
     return message
