@@ -147,13 +147,25 @@
   async function discoveryView(){if(!state.user)return navigate('login');await loadCategories();let content='';if(state.user.role==='worker'){
     state.jobs=await api('/api/discovery/jobs'+(state.filterCity||state.filterCategory?'?'
       +new URLSearchParams({...state.filterCity?{city:state.filterCity}:{},...state.filterCategory?{category_id:state.filterCategory}:{}}):''));
-      const job=state.jobs[0];content=`<h1 class="title">Jobs entdecken</h1><p class="subtitle">Wisch dich zum nächsten Match.
-      ${state.jobs.length} ${state.jobs.length===1?'Job':'Jobs'} verfügbar.</p><div class="row" style="gap:9px">
-      <label class="field grow">Stadt<input id="filter-city" placeholder="Alle Städte" value="${esc(state.filterCity)}"></label>
-      <label class="field grow">Bereich<select id="filter-category">${options([['','Alle Bereiche'],...state.categories.map(c=>[c.id,c.name])],
-        state.filterCategory)}</select></label><button class="btn small" id="filter-apply" style="align-self:end">OK</button></div>
-        ${job?jobCard(job):`<div class="empty"><div class="emoji">💜</div><h3>Für jetzt alles gesehen!</h3>
-          <p>Schau später wieder vorbei oder ändere deine Filter.</p></div>`}`;
+      // PHASE_52B3_DISCOVERY: real feed data, informative empty state, no demo jobs.
+      const job=state.jobs[0];
+      const filtered=Boolean(state.filterCity||state.filterCategory);
+      content=`<section class="dj-feed-intro"><div class="dj-feed-kicker">DEIN NÄCHSTER MATCH</div>
+        <h1>Jobs entdecken</h1><p>Finde die Arbeit, die zu dir passt – ohne Lebenslauf oder Bewerbung.</p>
+        <span class="dj-feed-count">${state.jobs.length} ${state.jobs.length===1?'Job':'Jobs'} zum Entdecken</span></section>
+        <div class="dj-discovery-filters">
+          <label class="field">Stadt<input id="filter-city" placeholder="Alle Städte" value="${esc(state.filterCity)}"></label>
+          <label class="field">Bereich<select id="filter-category">${options([['','Alle Bereiche'],...state.categories.map(c=>[c.id,c.name])],state.filterCategory)}</select></label>
+        </div>
+        <div class="dj-discovery-filter-actions"><button class="btn" id="filter-apply">Jobs anzeigen →</button>
+          <button class="dj-discovery-clear" type="button" id="filter-reset">Zurücksetzen</button></div>
+        ${job?jobCard(job):`<section class="dj-discovery-empty" aria-label="Keine weiteren Jobs">
+          <div class="dj-empty-icon" aria-hidden="true">${filtered?'🔎':'🤝'}</div>
+          <h2>${filtered?'Keine Jobs für diese Filter':'Du bist auf dem neuesten Stand!'}</h2>
+          <p>${filtered?'Probiere eine andere Stadt oder einen anderen Bereich.':'Du hast die derzeit für dich verfügbaren Jobs durchgesehen. Neue Stellen können später hinzukommen.'}</p>
+          <div class="dj-discovery-hint"><span aria-hidden="true">💡</span><span>${filtered?'Tippe oben auf „Zurücksetzen“, um ohne Stadt- oder Bereichsfilter zu suchen.':'Deine Likes und Matches sind weiterhin gespeichert. Schau dort nach, ob sich ein Kontakt ergeben hat.'}</span></div>
+          <div class="dj-discovery-links"><button data-go="likes">♥ Meine Likes</button><button data-go="chats">🤝 Chats öffnen</button></div>
+        </section><p class="dj-discovery-footnote">Hier werden ausschließlich echte, für deinen Account verfügbare Stellen angezeigt.</p>`}`;
   }else{
     state.mine=(await api('/api/jobs/mine')).filter(j=>j.is_active && !j.archived_at);if(!state.selectedJob||!state.mine.some(j=>j.id===state.selectedJob))
       state.selectedJob=state.mine[0]?.id||null;
@@ -320,6 +332,7 @@
     const s=event.target.closest('[data-swipe]');if(s)return swipe(s.dataset.swipe);
     const m=event.target.closest('[data-open-match]');
     if(m){state.currentMatch=m.dataset.openMatch;return navigate('conversation');}
+    if(event.target.closest('#filter-reset')){state.filterCity='';state.filterCategory='';return discoveryView();}
     if(event.target.closest('#filter-apply')){state.filterCity=$('#filter-city').value.trim();
       state.filterCategory=$('#filter-category').value;return discoveryView();}if(event.target.closest('#logout'))
         {await api('/api/auth/logout',{method:'POST'});closeChat();state.user=null;state.profile=null;state.categories=[];

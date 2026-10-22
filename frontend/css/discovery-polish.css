@@ -1,0 +1,31 @@
+/* DoppleJa 5.2B3 — accessible selects + purposeful discovery empty state */
+.screen .field{font-size:14px;line-height:1.45}
+.screen select,.screen select[name],.screen input:not([type=checkbox]):not([type=radio]),.screen textarea{
+  font-size:16px !important;line-height:1.45;min-height:52px;
+  color:#2d155a;letter-spacing:0;opacity:1;
+}
+.screen select{appearance:auto;-webkit-appearance:menulist;cursor:pointer;padding:12px 14px;background-color:#fffdf8}
+.screen select option{font-size:16px;color:#241044;background:#fffdf8;padding:10px}
+.screen .dj-discovery-filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:19px 0 13px}
+.screen .dj-discovery-filters .field{margin:0;min-width:0;font-size:13px;font-weight:700}
+.screen .dj-discovery-filters input,.screen .dj-discovery-filters select{width:100%;min-width:0;min-height:51px;font-size:15px !important;border-radius:13px}
+.screen .dj-discovery-filter-actions{display:flex;gap:10px;margin:0 0 22px;align-items:center}
+.screen .dj-discovery-filter-actions .btn{min-height:46px;flex:1}
+.screen .dj-discovery-clear{flex:0 0 auto;border-radius:13px;border:1px solid #d9c5f6;background:#ffffffb8;color:#582ca9;font-weight:750;padding:12px 15px;min-height:46px;cursor:pointer}
+.screen .dj-feed-intro{background:linear-gradient(125deg,#45138e,#7044e9);border:1px solid #8164db;color:white;border-radius:24px;padding:21px 19px;box-shadow:0 12px 30px #552ab82b;position:relative;overflow:hidden}
+.screen .dj-feed-intro::after{content:'✦';position:absolute;right:16px;top:11px;font-size:57px;color:#ffdd44;opacity:.6}
+.screen .dj-feed-kicker{font-size:11px;font-weight:800;letter-spacing:.14em;color:#ffec8f}
+.screen .dj-feed-intro h1{color:white;font-size:27px;line-height:1.12;letter-spacing:-.04em;margin:9px 0}
+.screen .dj-feed-intro p{color:#f3ebff;line-height:1.55;font-size:14px;margin:0;max-width:245px}
+.screen .dj-feed-count{display:inline-flex;align-items:center;border-radius:99px;background:#ffffff26;padding:6px 12px;margin-top:14px;color:#fff;font-size:12px;font-weight:750}
+.screen .dj-discovery-empty{background:rgba(255,255,255,.77);border:1px solid #eedba8;border-radius:25px;padding:23px 18px 19px;box-shadow:0 14px 31px #63318412;backdrop-filter:blur(14px);text-align:center}
+.screen .dj-empty-icon{width:72px;height:72px;border-radius:22px;display:grid;place-items:center;margin:0 auto 16px;background:linear-gradient(135deg,#f6e7ff,#fff1bd);font-size:34px}
+.screen .dj-discovery-empty h2{font-size:22px;letter-spacing:-.03em;color:#321064;line-height:1.2;margin:0 0 10px}
+.screen .dj-discovery-empty>p{color:#66577b;font-size:14px;line-height:1.55;margin:0 0 17px}
+.screen .dj-discovery-hint{display:flex;align-items:start;gap:9px;text-align:left;background:#f8f2ff;border:1px solid #eadffa;border-radius:14px;padding:12px;margin-bottom:14px;color:#4f3b71;font-size:13px;line-height:1.5}
+.screen .dj-discovery-hint span:first-child{font-size:18px}
+.screen .dj-discovery-links{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.screen .dj-discovery-links button{min-height:47px;border-radius:13px;border:1px solid #e5d7fa;background:#fbf9ff;color:#4e16ad;font-weight:800;font-size:13px;cursor:pointer}
+.screen .dj-discovery-links button:first-child{background:linear-gradient(125deg,#5b26d6,#764af6);color:white;border-color:transparent}
+.screen .dj-discovery-footnote{font-size:12px;color:#7b6c8b;line-height:1.5;text-align:center;margin:15px 9px}
+@media(max-width:365px){.screen .dj-feed-intro h1{font-size:24px}.screen .dj-discovery-empty{padding:18px 13px}.screen .dj-discovery-filters{gap:7px}}
