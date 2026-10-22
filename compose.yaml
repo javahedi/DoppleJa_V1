@@ -48,6 +48,7 @@ services:
       - "127.0.0.1:8001:8000"
     volumes:
       - ./backend:/code/backend
+      - ./frontend:/code/frontend:ro
       - ./tests:/code/tests:ro
     command:
       - uvicorn

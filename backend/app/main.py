@@ -1,3 +1,4 @@
+from backend.app.modules.frontend.router import router as frontend_router, assets as frontend_assets
 from fastapi import FastAPI
 from backend.app.modules.auth.router import router as auth_router
 from backend.app.modules.workers.router import router as workers_router
@@ -22,3 +23,7 @@ app.include_router(realtime_router)
 @app.get('/api/health', tags=['System'])
 def health_check():
     return {'status': 'ok', 'app': 'DoppleJa', 'version': '1.0.0'}
+
+# DoppleJa mobile-first frontend (same origin as cookie-based API)
+app.include_router(frontend_router)
+app.mount("/app-assets", frontend_assets, name="app-assets")
