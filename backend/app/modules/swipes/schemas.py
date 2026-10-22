@@ -16,6 +16,8 @@ class SwipeOut(BaseModel):
     actor_role: str
     action: str
     created_at: datetime
+    match_id: UUID | None = None
+    is_match: bool = False
 
 class CandidateOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)

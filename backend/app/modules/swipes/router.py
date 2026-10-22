@@ -1,10 +1,11 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from backend.app.core.database import get_db
 from backend.app.models import Job, Swipe, User, WorkerProfile
+from backend.app.modules.matching.service import reconcile_pair
 from backend.app.modules.auth.router import current_user
 from backend.app.modules.jobs.schemas import JobOut
 from backend.app.modules.swipes.schemas import CandidateOut, SwipeInput, SwipeOut
@@ -60,18 +61,35 @@ def swipe(body: SwipeInput, user: User = Depends(current_user), db: Session = De
     else:
         raise HTTPException(403, 'Invalid account role')
 
-    existing = db.scalar(select(Swipe).where(Swipe.job_id == body.job_id,
-                       Swipe.worker_id == worker_id, Swipe.actor_role == user.role))
-    if existing:
-        if existing.action != body.action:
-            raise HTTPException(409, 'Already swiped this card')
-        return existing  # Idempotent replay
-    value = Swipe(job_id=body.job_id, worker_id=worker_id, actor_role=user.role, action=body.action)
-    db.add(value)
+    # Serialize swipes for the same worker-job pair (including concurrent likes).
+    # PostgreSQL transaction advisory lock is automatically released on commit.
+    pair_key = f'{body.job_id}:{worker_id}'
+    db.execute(select(func.pg_advisory_xact_lock(func.hashtextextended(pair_key, 0))))
+
+    existing = db.scalar(select(Swipe).where(
+        Swipe.job_id == body.job_id,
+        Swipe.worker_id == worker_id,
+        Swipe.actor_role == user.role,
+    ))
+    if existing and existing.action != body.action:
+        raise HTTPException(409, 'Already swiped this card')
+
+    value = existing
+    if value is None:
+        value = Swipe(job_id=body.job_id, worker_id=worker_id,
+                      actor_role=user.role, action=body.action)
+        db.add(value)
+        db.flush()
+
+    # Reconciliation also works on identical replays, repairing missing matches.
+    match = reconcile_pair(db, body.job_id, worker_id) if body.action == 'like' else None
     try:
         db.commit()
     except IntegrityError:
         db.rollback()
         raise HTTPException(409, 'Already swiped this card')
     db.refresh(value)
-    return value
+    return SwipeOut.model_validate(value).model_copy(update={
+        'match_id': match.id if match else None,
+        'is_match': match is not None,
+    })
