@@ -1,13 +1,10 @@
 from fastapi import FastAPI
 from backend.app.modules.auth.router import router as auth_router
+from backend.app.modules.workers.router import router as workers_router
 
-app = FastAPI(
-    title="DoppleJa API",
-    description="Two sides. Two Yes. One Match.",
-    version="1.0.0",
-)
+app = FastAPI(title="DoppleJa API", description="Two sides. Two Yes. One Match.", version="1.0.0")
 app.include_router(auth_router)
-
+app.include_router(workers_router)
 
 @app.get("/api/health", tags=["System"])
 def health_check():
