@@ -43,18 +43,14 @@ def test_employer_job_and_worker_discovery(accounts):
     assert r.status_code == 201, r.text
     job_id = r.json()['id']
     assert len(employer.get('/api/jobs/mine').json()) == 1
-    assert len(worker.get('/api/jobs/discover',params={'city':'Berlin'}).json()) == 1
+    assert any(item['id'] == job_id for item in worker.get('/api/jobs/discover',params={'city':'Berlin'}).json())
     assert worker.get('/api/jobs/discover',params={'city':'Hamburg'}).json() == []
     assert worker.get('/api/jobs/discover',params={'category_id':2}).json() == []
     assert worker.get(f'/api/jobs/{job_id}').status_code == 200
     assert worker.put(f'/api/jobs/{job_id}',json=body).status_code == 403
     body['is_active'] = False
     assert employer.put(f'/api/jobs/{job_id}',json=body).status_code == 200
-    discovery_response = worker.get("/api/jobs/discover")
-    assert discovery_response.status_code == 200
-
-    discovered_jobs = discovery_response.json()
-    assert isinstance(discovered_jobs, list)
+    assert not any(item['id'] == job_id for item in worker.get('/api/jobs/discover').json())
     assert worker.get(f'/api/jobs/{job_id}').status_code == 404
     assert employer.get(f'/api/jobs/{job_id}').status_code == 200
 

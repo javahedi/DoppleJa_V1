@@ -6,3 +6,5 @@ from backend.app.models.employer import EmployerProfile
 from backend.app.models.job import Job, JobCategory
 
 __all__ = ['User', 'WorkerProfile', 'Company', 'VerificationToken', 'EmployerProfile', 'Job', 'JobCategory']
+
+from backend.app.models.swipe import Swipe
