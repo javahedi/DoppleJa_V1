@@ -6,7 +6,7 @@
   const root = document.getElementById('app');
   const state = { user:null, profile:null, page:'home', categories:[], jobs:[],
     candidates:[], mine:[], matches:[], chats:[], selectedJob:null, editingJob:null,
-    currentMatch:null, socket:null, filterCity:'', filterCategory:'', busy:false, chatPoll:null };
+    currentMatch:null, socket:null, filterCity:'', filterCategory:'', filterWorkType:'', busy:false, chatPoll:null };
   const esc = v => String(v ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
   const money = v => v == null ? '' : `${Number(v).toLocaleString('de-DE',{maximumFractionDigits:2})} €`;
   const date = v => v ? new Date(v).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) : '';
@@ -132,13 +132,27 @@
   };
   const art = filename => '/app-assets/assets/dj-people/'+filename;
   const workLabel = type => ({minijob:'Minijob',part_time:'Teilzeit',full_time:'Vollzeit',temporary:'Tagesjob / Kurzfristig'})[type] || type || 'Job';
-  const jobCard=job=>`<div class="sheet" style="margin:12px 0"><div class="hero ${job.category_id===1?'cafe':'work'}">
-  <img class="dj-photo" src="${art(jobArtwork[job.category_id]||'job-craft.webp')}" alt="" loading="lazy"><span class="dj-photo-tag">Symbolbild · ${esc(categoryName(job.category_id))}</span><h2>${esc(job.title)}</h2>
-  <p>📍 ${esc(job.city)}</p></div><div class="card-body"><div class="row"><strong>${esc(categoryName(job.category_id))}</strong>
-  <span class="pay">${money(job.hourly_pay_min)}${job.hourly_pay_max?' – '+money(job.hourly_pay_max):''}</span></div><div class="meta">
-  <span class="pill">${esc(workLabel(job.work_type))}</span><span class="pill">${esc(job.city)}</span></div>
-  <p class="desc">${esc(job.description||'Mehr Informationen im Chat nach einem Match.')}</p><div class="swipe-actions">
-  <button class="round" data-swipe="pass" aria-label="Nicht interessiert">✕</button><button class="round like" data-swipe="like" aria-label="Gefällt mir">♥</button></div></div></div>`;
+  // PHASE_52B5_WORKER_DISCOVERY: photograph-first card, only real API fields.
+  const jobCard=job=>{
+    const pay=job.hourly_pay_min!=null||job.hourly_pay_max!=null
+      ?`${money(job.hourly_pay_min)}${job.hourly_pay_max!=null?' – '+money(job.hourly_pay_max):''} / Std.`:'Vergütung auf Anfrage';
+    const artwork=art(jobArtwork[job.category_id]||'job-craft.webp');
+    const description=String(job.description||'Für diese Stelle liegt noch keine ausführliche Beschreibung vor.');
+    const posted=job.created_at?new Date(job.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'}):'';
+    return `<article class="dj-b5-card" aria-label="Stellenangebot: ${esc(job.title)}">
+      <div class="dj-b5-visual"><img src="${artwork}" alt="Symbolbild für ${esc(categoryName(job.category_id))}" loading="eager">
+        <span class="dj-b5-symbol">Symbolbild</span><span class="dj-b5-category">${esc(categoryName(job.category_id))}</span></div>
+      <div class="dj-b5-main"><div class="dj-b5-heading"><div><span class="dj-b5-eyebrow">AKTUELLES STELLENANGEBOT</span>
+        <h2>${esc(job.title)}</h2></div><span class="dj-b5-type">${esc(workLabel(job.work_type))}</span></div>
+        <p class="dj-b5-city">⌖ ${esc(job.city||'Ort nicht angegeben')}${posted?' · '+esc(posted):''}</p>
+        <div class="dj-b5-pay">${esc(pay)}</div>
+        <details class="dj-b5-details"><summary>Jobdetails anzeigen <span aria-hidden="true">⌄</span></summary>
+          <p>${esc(description)}</p><p class="dj-b5-info">Weitere Einzelheiten kannst du nach einem gegenseitigen Match im Chat klären.</p>
+        </details>
+        <div class="dj-b5-actions"><button type="button" class="dj-b5-pass" data-swipe="pass" aria-label="Job überspringen"><span aria-hidden="true">✕</span><small>Weiter</small></button>
+          <button type="button" class="dj-b5-like" data-swipe="like" aria-label="Job liken"><span aria-hidden="true">♥</span><small>Gefällt mir</small></button></div>
+      </div></article>`;
+  };
   const candidateCard=p=>`<div class="sheet"><div class="hero personal"><img class="dj-photo" src="${p.photo_url?esc(p.photo_url):art(workerArtwork(p.profession))}" alt="" loading="lazy"><span class="dj-photo-tag">${p.photo_url?'Profilfoto':'Symbolbild · Berufsbereich'}</span><h2>${esc(p.display_name)}</h2>
   <p>${esc(p.profession||'Arbeitssuchend')} · ${esc(p.city||'Deutschland')}</p></div><div class="card-body"><div class="meta">
   <span class="pill">${esc(p.availability||'Flexibel')}</span></div><p class="desc">${esc(p.bio||'Offen für neue Möglichkeiten.')}</p>
@@ -147,25 +161,31 @@
   async function discoveryView(){if(!state.user)return navigate('login');await loadCategories();let content='';if(state.user.role==='worker'){
     state.jobs=await api('/api/discovery/jobs'+(state.filterCity||state.filterCategory?'?'
       +new URLSearchParams({...state.filterCity?{city:state.filterCity}:{},...state.filterCategory?{category_id:state.filterCategory}:{}}):''));
-      // PHASE_52B3_DISCOVERY: real feed data, informative empty state, no demo jobs.
-      const job=state.jobs[0];
-      const filtered=Boolean(state.filterCity||state.filterCategory);
-      content=`<section class="dj-feed-intro"><div class="dj-feed-kicker">DEIN NÄCHSTER MATCH</div>
-        <h1>Jobs entdecken</h1><p>Finde die Arbeit, die zu dir passt – ohne Lebenslauf oder Bewerbung.</p>
-        <span class="dj-feed-count">${state.jobs.length} ${state.jobs.length===1?'Job':'Jobs'} zum Entdecken</span></section>
-        <div class="dj-discovery-filters">
-          <label class="field">Stadt<input id="filter-city" placeholder="Alle Städte" value="${esc(state.filterCity)}"></label>
+      // PHASE_52B5_WORKER_DISCOVERY: server-filter city/category; client-filter job type over returned feed.
+      // Work-type filtering only applies to the first server-returned batch; not advertised as exhaustive.
+      const visibleJobs=state.filterWorkType
+        ?state.jobs.filter(j=>j.work_type===state.filterWorkType):state.jobs;
+      const job=visibleJobs[0];
+      const filtered=Boolean(state.filterCity||state.filterCategory||state.filterWorkType);
+      const count=visibleJobs.length;
+      content=`<section class="dj-b5-intro"><div class="dj-b5-overline">DOPPLEJA · ENTDECKEN</div>
+          <h1>Finde deinen nächsten Job</h1><p>Ganz ohne Lebenslauf. Entdecke passende Stellen und zeig mit ♥ Interesse.</p>
+          <span class="dj-b5-count">${count} ${count===1?'Job':'Jobs'} in deiner Auswahl</span></section>
+        <section class="dj-b5-filter-panel" aria-label="Jobs filtern"><div class="dj-b5-filter-title"><strong>Deine Suche</strong>
+          <span>Stadt, Bereich &amp; Jobmodell</span></div>
+          <div class="dj-b5-fields"><label class="field">Stadt<input id="filter-city" placeholder="z. B. Berlin" value="${esc(state.filterCity)}"></label>
           <label class="field">Bereich<select id="filter-category">${options([['','Alle Bereiche'],...state.categories.map(c=>[c.id,c.name])],state.filterCategory)}</select></label>
-        </div>
-        <div class="dj-discovery-filter-actions"><button class="btn" id="filter-apply">Jobs anzeigen →</button>
-          <button class="dj-discovery-clear" type="button" id="filter-reset">Zurücksetzen</button></div>
-        ${job?jobCard(job):`<section class="dj-discovery-empty" aria-label="Keine weiteren Jobs">
-          <div class="dj-empty-icon" aria-hidden="true">${filtered?'🔎':'🤝'}</div>
-          <h2>${filtered?'Keine Jobs für diese Filter':'Du bist auf dem neuesten Stand!'}</h2>
-          <p>${filtered?'Probiere eine andere Stadt oder einen anderen Bereich.':'Du hast die derzeit für dich verfügbaren Jobs durchgesehen. Neue Stellen können später hinzukommen.'}</p>
-          <div class="dj-discovery-hint"><span aria-hidden="true">💡</span><span>${filtered?'Tippe oben auf „Zurücksetzen“, um ohne Stadt- oder Bereichsfilter zu suchen.':'Deine Likes und Matches sind weiterhin gespeichert. Schau dort nach, ob sich ein Kontakt ergeben hat.'}</span></div>
-          <div class="dj-discovery-links"><button data-go="likes">♥ Meine Likes</button><button data-go="chats">🤝 Chats öffnen</button></div>
-        </section><p class="dj-discovery-footnote">Hier werden ausschließlich echte, für deinen Account verfügbare Stellen angezeigt.</p>`}`;
+          <label class="field dj-b5-worktype">Jobmodell<select id="filter-worktype">${options([['','Alle Jobmodelle'],['minijob','Minijob'],['part_time','Teilzeit'],['full_time','Vollzeit'],['temporary','Tagesjob / Kurzfristig']],state.filterWorkType)}</select></label></div>
+          <div class="dj-b5-filter-buttons"><button type="button" class="btn" id="filter-apply">Jobs anzeigen →</button>
+          <button type="button" class="dj-b5-reset" id="filter-reset">Zurücksetzen</button></div></section>
+        ${job?`<div class="dj-b5-stack-label"><strong>Für dich entdecken</strong><span>${count} in dieser Auswahl</span></div>${jobCard(job)}`:
+        `<section class="dj-b5-empty"><div class="dj-b5-empty-icon">${filtered?'⌕':'🤝'}</div>
+          <h2>${filtered?'Keine Jobs mit diesen Filtern':'Du bist auf dem neuesten Stand!'}</h2>
+          <p>${filtered?'Versuche andere Suchkriterien. Die Auswahl beim Jobmodell wird auf die aktuell geladenen Stellen angewendet.':'Du hast die derzeit verfügbaren Jobs für deinen Account angesehen. Neue Jobs können später hinzukommen.'}</p>
+          <div class="dj-b5-empty-links"><button type="button" data-go="likes">♥ Meine Likes</button>
+          <button type="button" data-go="chats">🤝 Chats öffnen</button></div></section>`}
+        <p class="dj-b5-note">Jobfotos sind Symbolbilder. Likes und Matches basieren auf echten Einträgen in deiner aktuellen Datenbank.</p>`;
+
   }else{
     state.mine=(await api('/api/jobs/mine')).filter(j=>j.is_active && !j.archived_at);if(!state.selectedJob||!state.mine.some(j=>j.id===state.selectedJob))
       state.selectedJob=state.mine[0]?.id||null;
@@ -332,9 +352,9 @@
     const s=event.target.closest('[data-swipe]');if(s)return swipe(s.dataset.swipe);
     const m=event.target.closest('[data-open-match]');
     if(m){state.currentMatch=m.dataset.openMatch;return navigate('conversation');}
-    if(event.target.closest('#filter-reset')){state.filterCity='';state.filterCategory='';return discoveryView();}
+    if(event.target.closest('#filter-reset')){state.filterCity='';state.filterCategory='';state.filterWorkType='';return discoveryView();}
     if(event.target.closest('#filter-apply')){state.filterCity=$('#filter-city').value.trim();
-      state.filterCategory=$('#filter-category').value;return discoveryView();}if(event.target.closest('#logout'))
+      state.filterCategory=$('#filter-category').value;state.filterWorkType=$('#filter-worktype').value;return discoveryView();}if(event.target.closest('#logout'))
         {await api('/api/auth/logout',{method:'POST'});closeChat();state.user=null;state.profile=null;state.categories=[];
       toast('Abgemeldet');return navigate('home');}}));
   root.addEventListener('change',event=>run(async()=>{if(event.target.name==='job-picker'){state.selectedJob=event.target.value;await discoveryView();}}));

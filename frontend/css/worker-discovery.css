@@ -1,0 +1,56 @@
+/* DoppleJa Phase 5.2B5 — worker-only discovery. Existing employer flows unaffected. */
+.screen .dj-b5-intro{padding:22px 20px;border-radius:23px;background:linear-gradient(135deg,#3c107b,#6230d6 75%,#7950ee);color:#fff;box-shadow:0 16px 30px #5f33b82c}
+.screen .dj-b5-overline{color:#ffe784;letter-spacing:.16em;font-size:10px;font-weight:850}
+.screen .dj-b5-intro h1{font-size:27px;line-height:1.13;letter-spacing:-.045em;color:white;margin:9px 0 8px}
+.screen .dj-b5-intro p{font-size:13px;color:#efe8ff;line-height:1.5;margin:0}
+.screen .dj-b5-count{display:inline-block;margin-top:14px;padding:7px 12px;border-radius:99px;background:#ffffff26;color:#fff;font-weight:750;font-size:12px}
+.screen .dj-b5-filter-panel{background:#ffffffaa;border:1px solid #eadcba;border-radius:18px;padding:15px;margin:16px 0 18px;box-shadow:0 8px 20px #6b409510}
+.screen .dj-b5-filter-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.screen .dj-b5-filter-title strong{color:#2d115a;font-size:15px}
+.screen .dj-b5-filter-title>span{color:#827391;font-size:11px}
+.screen .dj-b5-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px}
+.screen .dj-b5-fields>.field{min-width:0;font-size:12px;margin:0;color:#341665}
+.screen .dj-b5-fields .dj-b5-worktype{grid-column:1/-1}
+.screen .dj-b5-fields input,.screen .dj-b5-fields select{font-size:16px!important;min-height:47px;width:100%;background:#fff;border-radius:12px}
+.screen .dj-b5-filter-buttons{display:grid;grid-template-columns:1.3fr 1fr;gap:9px;margin-top:12px}
+.screen .dj-b5-filter-buttons button{min-height:45px;font-size:13px}
+.screen .dj-b5-reset{border:1px solid #d6c4f3;color:#5427ab;background:#fff;border-radius:12px;font-weight:800;cursor:pointer}
+.screen .dj-b5-stack-label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 2px}
+.screen .dj-b5-stack-label strong{color:#2d115a;font-size:16px}
+.screen .dj-b5-stack-label span{font-size:12px;color:#76678b}
+.screen .dj-b5-card{border:1px solid #ebdbaa;border-radius:23px;background:#fffdfaf0;overflow:hidden;box-shadow:0 14px 32px #3c1a791b;margin:0 0 16px}
+.screen .dj-b5-visual{height:250px;position:relative;background:#eadfe9;overflow:hidden}
+.screen .dj-b5-visual>img{height:100%;width:100%;object-fit:cover;object-position:center 34%;display:block}
+.screen .dj-b5-visual::after{content:'';position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#180a3370);pointer-events:none}
+.screen .dj-b5-symbol,.screen .dj-b5-category{position:absolute;z-index:2;border-radius:99px;font-size:11px;font-weight:800;backdrop-filter:blur(10px);padding:6px 10px}
+.screen .dj-b5-symbol{top:12px;right:12px;background:#140a377a;color:white}
+.screen .dj-b5-category{bottom:13px;left:13px;background:#fff5d6;color:#361361}
+.screen .dj-b5-main{padding:18px 17px 20px}
+.screen .dj-b5-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.screen .dj-b5-eyebrow{font-size:9px;letter-spacing:.09em;font-weight:900;color:#784bba}
+.screen .dj-b5-heading h2{font-size:22px;line-height:1.15;letter-spacing:-.03em;color:#29104e;margin:5px 0 8px}
+.screen .dj-b5-type{background:#f1ebff;color:#5222ad;border-radius:99px;padding:7px 9px;font-size:11px;font-weight:800;white-space:nowrap}
+.screen .dj-b5-city{font-size:13px;color:#77668b;margin:0 0 12px}
+.screen .dj-b5-pay{font-weight:900;color:#341264;font-size:20px;letter-spacing:-.02em}
+.screen .dj-b5-details{border-top:1px solid #eee3d9;margin-top:14px;padding:11px 0 0}
+.screen .dj-b5-details summary{cursor:pointer;color:#562db0;font-weight:800;font-size:13px;list-style:none;display:flex;justify-content:space-between;min-height:32px;align-items:center}
+.screen .dj-b5-details summary::-webkit-details-marker{display:none}
+.screen .dj-b5-details[open] summary span{transform:rotate(180deg)}
+.screen .dj-b5-details p{font-size:14px;line-height:1.55;color:#5e5370;white-space:pre-wrap;overflow-wrap:anywhere}
+.screen .dj-b5-details .dj-b5-info{font-size:12px;color:#76678b}
+.screen .dj-b5-actions{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:15px}
+.screen .dj-b5-actions button{min-height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:25px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.screen .dj-b5-actions button:active{transform:scale(.97)}
+.screen .dj-b5-actions small{font-weight:850;font-size:13px}
+.screen .dj-b5-pass{background:#fff;border:1px solid #d7c7eb;color:#563a7e}
+.screen .dj-b5-like{background:linear-gradient(135deg,#663df4,#4b1bac);border:1px solid transparent;color:#fff;box-shadow:0 8px 18px #5634bd40}
+.screen .dj-b5-empty{text-align:center;border:1px solid #e8daa7;background:#fffcf4dc;border-radius:23px;padding:24px 17px;margin-bottom:13px}
+.screen .dj-b5-empty-icon{width:68px;height:68px;margin:0 auto 12px;display:grid;place-items:center;font-size:34px;background:#f1e7ff;border-radius:22px;color:#612ec8}
+.screen .dj-b5-empty h2{color:#30105d;font-size:21px;margin:4px 0 9px}
+.screen .dj-b5-empty p{color:#695c79;font-size:14px;line-height:1.55}
+.screen .dj-b5-empty-links{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}
+.screen .dj-b5-empty-links button{font-size:12px;font-weight:800;border-radius:13px;border:1px solid #e6d8f6;background:white;color:#4d239c;padding:13px 7px;cursor:pointer}
+.screen .dj-b5-empty-links button:first-child{background:#6334d5;color:white;border-color:#6334d5}
+.screen .dj-b5-note{font-size:11px;color:#897c91;line-height:1.5;text-align:center;padding:0 6px 28px}
+@media(max-width:370px){.screen .dj-b5-visual{height:220px}.screen .dj-b5-intro h1{font-size:23px}.screen .dj-b5-filter-title>span{display:none}}
+@media(prefers-reduced-motion:reduce){.screen .dj-b5-actions button{transition:none}}
