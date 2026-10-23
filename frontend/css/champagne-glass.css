@@ -1,0 +1,98 @@
+/* DoppleJa Phase 5.2A visual refinement. Appended after the existing two stylesheets.
+   CSS only; all API, JS state and workflow behavior remains unchanged. */
+:root {
+  --dj-violet: #4e16ad;
+  --dj-deep: #29065b;
+  --dj-purple: #6547f5;
+  --dj-yellow: #ffe000;
+  --dj-cream: #fff9d9;
+  --dj-text: #241044;
+  --dj-border: rgba(176, 137, 55, .20);
+  --dj-glass: rgba(255, 255, 255, .72);
+  --dj-shadow: 0 12px 32px rgba(79, 22, 173, .075), 0 2px 11px rgba(160, 111, 12, .04);
+}
+html { background: #f7eec8; }
+body {
+  background: radial-gradient(ellipse at 15% 8%, rgba(255,255,255,.96), transparent 49%),
+              radial-gradient(ellipse at 84% 80%, rgba(255,224,102,.28), transparent 48%),
+              linear-gradient(155deg,#fffef3 0%,#fff9dd 48%,#fff0be 100%);
+  color: var(--dj-text);
+}
+.app-shell {
+  background: linear-gradient(160deg, #fffdf2 0%, #fff8d9 65%, #fff2c8 100%);
+  color: var(--dj-text);
+}
+/* Preserve original full-bleed dark onboarding hero */
+.premium-welcome { background: radial-gradient(circle at 50% 55%,#7400b8 0%,#451078 37%,#21094a 85%); color:#fff; }
+.premium-welcome .brand { color: var(--dj-yellow); letter-spacing:-.08em; font-weight:900; }
+.premium-welcome .pw-dot { color:#fff; }
+.premium-welcome .btn.yellow { background:var(--dj-yellow); color:var(--dj-deep); }
+/* Shared visual language for all screens after welcome */
+.screen:not(.premium-welcome), .premium-auth {
+  background: radial-gradient(ellipse at 84% 2%,rgba(255,255,255,.9),transparent 48%),
+              radial-gradient(ellipse at 4% 81%,rgba(255,219,95,.20),transparent 50%),
+              linear-gradient(150deg,#fffefa 0%,#fff9e4 57%,#fff1c9 100%);
+  color:var(--dj-text);
+}
+/* Logo wordmark is a deliberate reverse of the yellow splash */
+.logo, .screen .brand:not(.premium-welcome .brand) {
+  color: var(--dj-violet);
+  font-family:'DM Sans',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-weight:900;
+  letter-spacing:-.065em;
+}
+.title,.section-title,.pa-section-heading strong,.premium-auth .title {color:var(--dj-deep);}
+.subtitle,.small-muted {color:#6b6080;}
+/* Lightweight glass surfaces. Never use opaque yellow under small text. */
+.sheet,.list-card,.choose,.pa-role,.pa-interest,.glass-card {
+  background:var(--dj-glass);
+  border:1px solid var(--dj-border);
+  box-shadow:var(--dj-shadow);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+}
+.sheet { overflow:hidden; }
+.pa-role:has(input:checked),.pa-interest:has(input:checked) {
+  background:rgba(255,255,255,.89);
+  border-color:#8462ed;
+  box-shadow:0 0 0 2px rgba(103,72,250,.12),var(--dj-shadow);
+}
+.premium-auth .pa-role-copy strong,.premium-auth .pa-interest span {color:var(--dj-deep);}
+.premium-auth .back,.back,.btn.ghost,.list-card button {
+  background:rgba(108,72,238,.09);color:var(--dj-deep);
+}
+.premium-auth .field input,.field input,.field select,.field textarea,.filter select,.chat-compose input {
+  background:rgba(255,255,255,.80);
+  border-color:rgba(121,90,177,.23);
+  color:var(--dj-deep);
+}
+.premium-auth .field input:focus,.field input:focus,.field select:focus,.field textarea:focus {
+  outline:2px solid rgba(101,71,245,.54);outline-offset:1px;
+}
+.btn:not(.yellow):not(.outline):not(.ghost), .pa-primary {
+  background:linear-gradient(135deg,#6f4afc 0%,#4e16ad 100%)!important;
+  color:#fff!important;
+  box-shadow:0 7px 18px rgba(78,22,173,.18);
+}
+.premium-auth .pa-kicker,.pa-select-arrow,.pa-login-decoration {color:var(--dj-violet);}
+.pa-login-decoration {
+  background:radial-gradient(circle at 50% 28%,rgba(255,255,255,.85),transparent 41%),
+             linear-gradient(140deg,rgba(255,243,191,.95),rgba(235,215,255,.85));
+  border:1px solid rgba(180,142,60,.24);
+  box-shadow:var(--dj-shadow);
+}
+.empty { background:rgba(255,255,255,.48);border:1px solid var(--dj-border); }
+.chip { background:rgba(255,255,255,.68);border-color:var(--dj-border); }
+.chip.active { background:var(--dj-purple);border-color:var(--dj-purple);color:white; }
+.bottom-nav {
+  background:rgba(255,253,239,.93);
+  border-top:1px solid var(--dj-border);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+}
+.bottom-nav button.active { color:var(--dj-violet); }
+.chat-compose {background:rgba(255,249,220,.88);}
+.bubble:not(.mine) { background:rgba(255,255,255,.82); }
+@media (prefers-reduced-transparency: reduce) {
+  .sheet,.list-card,.choose,.pa-role,.pa-interest,.glass-card,.bottom-nav {background:#fffdf4;backdrop-filter:none;-webkit-backdrop-filter:none;}
+}
+@media (max-width:359px) {.premium-auth {padding-inline:17px}.pa-role {grid-template-columns:80px 1fr 20px}.pa-role img {width:80px}}

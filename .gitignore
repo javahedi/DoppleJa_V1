@@ -23,5 +23,15 @@ uploads/
 backups/
 
 
+# Local installation packages and backups
+.local-archive/
+.phase5_*_backup*/
+DoppleJa_Phase5_*/
+
+# Local temporary files
+.DS_Store
+__pycache__/
+*.pyc
+
 
 myNote.txt

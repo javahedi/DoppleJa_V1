@@ -39,11 +39,17 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       DB_HOST: db
+      AUTH_SECRET_KEY: ${AUTH_SECRET_KEY:?required}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      AUTH_DEV_PRINT_LINK: ${AUTH_DEV_PRINT_LINK:-false}
+      PUBLIC_API_URL: ${PUBLIC_API_URL:-http://127.0.0.1:8001}
       
     ports:
       - "127.0.0.1:8001:8000"
     volumes:
       - ./backend:/code/backend
+      - ./frontend:/code/frontend:ro
+      - ./tests:/code/tests:ro
     command:
       - uvicorn
       - backend.app.main:app

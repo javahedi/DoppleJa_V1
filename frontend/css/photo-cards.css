@@ -1,0 +1,42 @@
+/* Phase 5.2B: category-specific photo cards, with champagne glass UI preserved. */
+.hero:has(.dj-photo) {
+  min-height: 300px;
+  background: #341c57;
+  padding: 20px;
+  isolation: isolate;
+}
+.hero:has(.dj-photo)::before { display: none; }
+.hero:has(.dj-photo)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg,rgba(32,10,60,.12) 0%,rgba(32,10,60,0) 36%,rgba(25,8,45,.85) 100%);
+}
+.hero .dj-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 32%;
+  z-index: -2;
+}
+.hero .dj-photo-tag {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  background: rgba(40,13,70,.68);
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+.hero:has(.dj-photo) h2 { max-width: 100%; font-size: 25px; text-shadow:0 2px 8px #1a0933a3; }
+.hero:has(.dj-photo) p { font-size: 13px; color:#fff; text-shadow:0 2px 8px #1a0933a3; }
+.sheet:has(.dj-photo) { box-shadow:0 12px 35px #3e176122; border-color:rgba(108,72,238,.19); }
+@media (max-width:380px) {.hero:has(.dj-photo) { min-height:270px; }}
