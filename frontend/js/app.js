@@ -153,11 +153,24 @@
           <button type="button" class="dj-b5-like" data-swipe="like" aria-label="Job liken"><span aria-hidden="true">♥</span><small>Gefällt mir</small></button></div>
       </div></article>`;
   };
-  const candidateCard=p=>`<div class="sheet"><div class="hero personal"><img class="dj-photo" src="${p.photo_url?esc(p.photo_url):art(workerArtwork(p.profession))}" alt="" loading="lazy"><span class="dj-photo-tag">${p.photo_url?'Profilfoto':'Symbolbild · Berufsbereich'}</span><h2>${esc(p.display_name)}</h2>
-  <p>${esc(p.profession||'Arbeitssuchend')} · ${esc(p.city||'Deutschland')}</p></div><div class="card-body"><div class="meta">
-  <span class="pill">${esc(p.availability||'Flexibel')}</span></div><p class="desc">${esc(p.bio||'Offen für neue Möglichkeiten.')}</p>
-  <div class="swipe-actions"><button class="round" data-swipe="pass" aria-label="Weiter">✕</button>
-  <button class="round like" data-swipe="like" aria-label="Gefällt mir">♥</button></div></div></div>`;
+  // PHASE_52B6_EMPLOYER_DISCOVERY: photo-first candidate card; only API-supplied data.
+  const candidateCard=p=>`<article class="dj-b6-card" aria-label="Kandidatenprofil ${esc(p.display_name||'')}">
+    <div class="dj-b6-photo">
+      <img src="${p.photo_url?esc(p.photo_url):art(workerArtwork(p.profession))}" alt="" loading="lazy">
+      <span class="dj-b6-art-label">${p.photo_url?'Profilfoto':'Symbolbild · Berufsbereich'}</span>
+      <span class="dj-b6-photo-job">${esc(p.profession||'Offen für Arbeit')}</span>
+    </div>
+    <div class="dj-b6-body">
+      <div class="dj-b6-kicker">KANDIDATENPROFIL</div>
+      <h2>${esc(p.display_name||'Unbenanntes Profil')}</h2>
+      <div class="dj-b6-meta"><span>⌖ ${esc(p.city||'Ort nicht angegeben')}</span><span>◷ ${esc(p.availability||'Verfügbarkeit nicht angegeben')}</span></div>
+      <details class="dj-b6-details"><summary>Über diese Person <span aria-hidden="true">⌄</span></summary>
+        <p>${esc(p.bio||'Diese Person hat noch keine Beschreibung hinterlegt.')}</p>
+      </details>
+      <div class="dj-b6-actions"><button type="button" data-swipe="pass" class="dj-b6-pass" aria-label="Kandidat überspringen"><span>✕</span> Weiter</button>
+      <button type="button" data-swipe="like" class="dj-b6-like" aria-label="Kandidaten liken"><span>♥</span> Gefällt mir</button></div>
+    </div>
+  </article>`;
   async function discoveryView(){if(!state.user)return navigate('login');await loadCategories();let content='';if(state.user.role==='worker'){
     state.jobs=await api('/api/discovery/jobs'+(state.filterCity||state.filterCategory?'?'
       +new URLSearchParams({...state.filterCity?{city:state.filterCity}:{},...state.filterCategory?{category_id:state.filterCategory}:{}}):''));
@@ -187,20 +200,26 @@
         <p class="dj-b5-note">Jobfotos sind Symbolbilder. Likes und Matches basieren auf echten Einträgen in deiner aktuellen Datenbank.</p>`;
 
   }else{
-    state.mine=(await api('/api/jobs/mine')).filter(j=>j.is_active && !j.archived_at);if(!state.selectedJob||!state.mine.some(j=>j.id===state.selectedJob))
-      state.selectedJob=state.mine[0]?.id||null;
-    if(state.selectedJob)state.candidates=await api('/api/discovery/workers?job_id='+encodeURIComponent(state.selectedJob));else state.candidates=[];
+    // PHASE_52B6_EMPLOYER_FEED: preserve job picker and real discovery/swipe APIs.
+    state.mine=(await api('/api/jobs/mine')).filter(j=>j.is_active&&!j.archived_at);
+    if(!state.selectedJob||!state.mine.some(j=>j.id===state.selectedJob))state.selectedJob=state.mine[0]?.id||null;
+    if(state.selectedJob)state.candidates=await api('/api/discovery/workers?job_id='+encodeURIComponent(state.selectedJob));
+    else state.candidates=[];
     const employerName=state.profile?.display_name||'Dein Unternehmen';
-    const dashboard=`<section class="dj-employer-intro"><div class="dj-page-eyebrow">PERSONAL FINDEN</div>
-      <h2>Hallo, ${esc(employerName)} 👋</h2><p>Dein nächstes 🤝 Match ist vielleicht nur ein Like entfernt.</p>
-      <div class="dj-employer-stats"><span><strong>${state.mine.length}</strong> aktive Jobs</span><span><strong>${state.candidates.length}</strong> neue Profile</span></div></section>`;
-    content=`${dashboard}<div class="row"><h1 class="title">Personal entdecken</h1><button class="btn small" data-go="my-jobs">Meine Jobs</button>
-    <button class="btn small" data-go="job-create">+ Job</button></div><p class="subtitle">Finde Menschen für deinen Job – ohne Bewerbung.
-    </p>${state.mine.length?`${select('Für welchen Job?','job-picker',
-      state.mine.map(j=>[j.id,j.title]),state.selectedJob)}`:`<div class="notice">Erstelle zuerst einen Job, damit du Kandidaten entdecken kannst.</div>
-      <button class="btn" data-go="job-create">Job erstellen</button>`}
-      ${state.candidates.length?candidateCard(state.candidates[0]):state.mine.length?`<div class="empty"><div class="emoji">👥</div>
-        <h3>Keine weiteren Profile</h3><p>Neue Kandidaten erscheinen hier.</p></div>`:''}`;
+    const selected=state.mine.find(j=>j.id===state.selectedJob);
+    content=`<section class="dj-b6-intro"><div class="dj-b6-overline">DOPPLEJA · PERSONAL FINDEN</div>
+      <h1>Menschen entdecken</h1><p>Hallo, ${esc(employerName)}! Finde passende Menschen für deine offenen Stellen – ohne klassische Bewerbung.</p>
+      <div class="dj-b6-stats"><span><strong>${state.mine.length}</strong> aktive Jobs</span><span><strong>${state.candidates.length}</strong> neue Profile</span></div></section>
+      <section class="dj-b6-controls" aria-label="Stelle auswählen"><div class="dj-b6-heading"><strong>Für welchen Job suchst du?</strong><button type="button" data-go="my-jobs">Meine Jobs →</button></div>
+      ${state.mine.length?`${select('Stelle auswählen','job-picker',state.mine.map(j=>[j.id,j.title+' · '+j.city]),state.selectedJob)}
+        <div class="dj-b6-selected">${esc(selected?.title||'')} · ${esc(selected?.city||'')}</div>`:
+        `<div class="dj-b6-nojob"><p>Du brauchst zuerst eine aktive Stellenanzeige, um Kandidatinnen und Kandidaten zu entdecken.</p>
+        <button type="button" class="btn" data-go="job-create">+ Job erstellen</button></div>`}</section>
+      ${state.candidates.length?`<div class="dj-b6-sectionlabel"><strong>Für diese Stelle entdecken</strong><span>${state.candidates.length} ${state.candidates.length===1?'Profil':'Profile'} verfügbar</span></div>
+        ${candidateCard(state.candidates[0])}`:state.mine.length?`<section class="dj-b6-empty"><div class="dj-b6-empty-icon">🤝</div>
+        <h2>Alle aktuellen Profile angesehen</h2><p>Für diese Stelle sind gerade keine weiteren Profile verfügbar. Wähle eine andere Stelle oder komm später wieder.</p>
+        <div class="dj-b6-empty-actions"><button type="button" data-go="my-jobs">Meine Jobs</button><button type="button" data-go="chats">🤝 Chats</button></div></section>`:''}
+      <p class="dj-b6-note">Ohne hochgeladenes Profilfoto zeigen wir ein gekennzeichnetes Symbolbild. Es gibt keine erfundenen Bewertungen oder Match-Prozente.</p>`;
   }render(shell(content,'discover'));}
   async function swipe(action){if(state.busy)return;let job_id,worker_id;if(state.user.role==='worker'){job_id=state.jobs[0]?.id;}
   else{job_id=state.selectedJob;worker_id=state.candidates[0]?.user_id;}if(!job_id)return;state.busy=true;
