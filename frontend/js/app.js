@@ -89,12 +89,35 @@
     <div class="notice">Im lokalen Entwicklermodus steht der Link in den Docker-Logs:<br><code>docker compose logs --tail=80 api</code></div>
     <button class="btn pa-primary" data-go="login">Zum Login →</button></section>`);}
   async function loadMe(){try{state.user=await api('/api/auth/me');return true;}catch{state.user=null;return false;}}
+  // PHASE_54B_PUBLIC_REPUTATION: summary from received reviews only, never made-up scores.
+  const readRating=async userId=>{
+    if(!userId)return null;
+    try{return await api('/api/users/'+encodeURIComponent(userId)+'/rating');}
+    catch(e){console.warn('Rating unavailable:',e);return null;}
+  };
+  const ratingView=(rating,extraClass='')=>{
+    if(!rating)return `<div class="dj54b-rating ${extraClass}" aria-label="Bewertungsstatus nicht verfügbar">Bewertungen derzeit nicht verfügbar</div>`;
+    if(!rating.count||rating.average==null)return `<div class="dj54b-rating dj54b-unrated ${extraClass}">☆ Noch keine Bewertungen</div>`;
+    const avg=Number(rating.average).toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1});
+    const total=Number(rating.count);
+    return `<div class="dj54b-rating ${extraClass}" aria-label="${esc(avg)} von 5 Sternen aus ${total} Bewertungen"><span aria-hidden="true">★</span> <strong>${esc(avg)} / 5</strong> <span>(${total} ${total===1?'Bewertung':'Bewertungen'})</span></div>`;
+  };
+  const receivedReviews=async userId=>{
+    try{return await api('/api/users/'+encodeURIComponent(userId)+'/reviews?limit=20');}
+    catch(e){console.warn('Review history unavailable:',e);return null;}
+  };
+  const reviewHistory=items=>{
+    if(items===null)return '<p class="dj54b-muted">Bewertungen können momentan nicht geladen werden.</p>';
+    if(!items.length)return '<p class="dj54b-muted">Noch keine Bewertungen aus abgeschlossenen Aufträgen.</p>';
+    return items.map(r=>`<article class="dj54b-review"><div class="dj54b-review-top"><span class="dj54b-review-stars" aria-label="${Number(r.stars)} von 5 Sternen">${'★'.repeat(Number(r.stars))}</span><time>${esc(new Date(r.created_at).toLocaleDateString('de-DE'))}</time></div>${r.comment?`<p>${esc(r.comment)}</p>`:'<p class="dj54b-muted">Ohne Kommentar</p>'}</article>`).join('');
+  };
   async function profileView(){
     if(!state.user)return navigate('login');
     let profile;
     try { profile=await api(state.user.role==='worker'?'/api/workers/me':'/api/employers/me'); }
     catch(e){if(!e.message.includes('404')&&!e.message.includes('Complete'))console.warn(e);profile=null;}
     state.profile=profile;
+    const [myRating,myReviews]=await Promise.all([readRating(state.user.id),receivedReviews(state.user.id)]);
     const p=profile||{}, worker=state.user.role==='worker';
     const isOwnPhoto=Boolean(p.photo_url);
     const image=isOwnPhoto?esc(p.photo_url):(worker?art(workerArtwork(p.profession)):art(/bau|montage|handwerk|maler/i.test(p.category||'')?'employer-craft.webp':/gesund|pflege|medizin/i.test(p.category||'')?'employer-care.webp':'employer-cafe.webp'));
@@ -104,6 +127,9 @@
       <p class="subtitle">${worker?'Zeig deine Stärken – ganz ohne Lebenslauf.':'Zeig, wer hinter deinen Stellenanzeigen steht.'}</p>
       <section class="dj-profile-banner"><img src="${image}" alt="" loading="lazy"><div class="dj-photo-label">${isOwnPhoto?'Profilbild':'Symbolbild'}</div><div class="dj-profile-overlay"><span class="dj-profile-chip">${worker?'Jobsuchend':p.employer_type==='business'?'Unternehmen':'Arbeitgeber'}</span><h2>${esc(p.display_name||'Dein DoppleJa Profil')}</h2><p>⌖ ${esc(p.city||'Deutschland')}</p></div></section>
       ${overview}
+      <section class="dj54b-profile-panel" aria-label="Öffentliche Bewertungen"><div class="dj54b-profile-heading"><h2>Bewertungen</h2><span>Nach abgeschlossenen Aufträgen</span></div>
+      ${ratingView(myRating,'dj54b-rating-large')}
+      <details class="dj54b-history"><summary>Bewertungen ansehen <span aria-hidden="true">⌄</span></summary><div>${reviewHistory(myReviews)}</div></details></section>
       <section class="dj-glass-panel"><div class="dj-panel-heading"><h2>Profil bearbeiten</h2><span>Jederzeit änderbar</span></div>
       <form id="profile-form" class="form">${worker?`${field('Name','display_name',p.display_name||'','required minlength="2"')}
       ${field('Beruf / Position','profession',p.profession||'')}${field('Stadt','city',p.city||'')}
@@ -145,6 +171,7 @@
       <div class="dj-b5-main"><div class="dj-b5-heading"><div><span class="dj-b5-eyebrow">AKTUELLES STELLENANGEBOT</span>
         <h2>${esc(job.title)}</h2></div><span class="dj-b5-type">${esc(workLabel(job.work_type))}</span></div>
         <p class="dj-b5-city">⌖ ${esc(job.city||'Ort nicht angegeben')}${posted?' · '+esc(posted):''}</p>
+        <div class="dj54b-list-rating"><span>Arbeitgeberbewertung</span>${ratingView(job.__rating)}</div>
         <div class="dj-b5-pay">${esc(pay)}</div>
         <details class="dj-b5-details"><summary>Jobdetails anzeigen <span aria-hidden="true">⌄</span></summary>
           <p>${esc(description)}</p><p class="dj-b5-info">Weitere Einzelheiten kannst du nach einem gegenseitigen Match im Chat klären.</p>
@@ -163,6 +190,7 @@
     <div class="dj-b6-body">
       <div class="dj-b6-kicker">KANDIDATENPROFIL</div>
       <h2>${esc(p.display_name||'Unbenanntes Profil')}</h2>
+      <div class="dj54b-list-rating"><span>Bewertung dieser Person</span>${ratingView(p.__rating)}</div>
       <div class="dj-b6-meta"><span>⌖ ${esc(p.city||'Ort nicht angegeben')}</span><span>◷ ${esc(p.availability||'Verfügbarkeit nicht angegeben')}</span></div>
       <details class="dj-b6-details"><summary>Über diese Person <span aria-hidden="true">⌄</span></summary>
         <p>${esc(p.bio||'Diese Person hat noch keine Beschreibung hinterlegt.')}</p>
@@ -179,6 +207,7 @@
       const visibleJobs=state.filterWorkType
         ?state.jobs.filter(j=>j.work_type===state.filterWorkType):state.jobs;
       const job=visibleJobs[0];
+      if(job)job.__rating=await readRating(job.employer_id);
       const filtered=Boolean(state.filterCity||state.filterCategory||state.filterWorkType);
       const count=visibleJobs.length;
       content=`<section class="dj-b5-intro"><div class="dj-b5-overline">DOPPLEJA · ENTDECKEN</div>
@@ -205,6 +234,7 @@
     if(!state.selectedJob||!state.mine.some(j=>j.id===state.selectedJob))state.selectedJob=state.mine[0]?.id||null;
     if(state.selectedJob)state.candidates=await api('/api/discovery/workers?job_id='+encodeURIComponent(state.selectedJob));
     else state.candidates=[];
+    if(state.candidates.length)state.candidates[0].__rating=await readRating(state.candidates[0].user_id);
     const employerName=state.profile?.display_name||'Dein Unternehmen';
     const selected=state.mine.find(j=>j.id===state.selectedJob);
     content=`<section class="dj-b6-intro"><div class="dj-b6-overline">DOPPLEJA · PERSONAL FINDEN</div>
@@ -368,6 +398,7 @@
           <strong>${esc(displayName)}</strong><div class="dj2-chat-job">${esc(jobTitle)}</div>
           <span class="dj2-chat-status" id="chat-status" role="status">Verbindung wird hergestellt …</span>
         </div></header>
+      <section class="dj54-review-panel" id="dj54-review-panel" aria-label="Auftrag abschließen und bewerten"></section>
       <div class="dj2-chat-tip">Ihr habt euch gegenseitig geliked. Jetzt könnt ihr euch direkt austauschen.</div>
       <div class="chat-messages dj2-messages" id="messages" aria-label="Chatverlauf" aria-live="polite">${bubbles||'<div class="dj2-chat-empty">Sag Hallo! 👋</div>'}</div>
       <form id="chat-form" class="chat-compose dj2-compose">
@@ -375,6 +406,7 @@
         <button type="submit" aria-label="Nachricht senden">➤</button></form></section>`,'chats'));
     const area=$('#messages');if(area)area.scrollTop=area.scrollHeight;
     connectChat(id);
+    await loadCompletionPanel(id);
   }
   function appendMessage(message){const area=$('#messages');
     if(!area||!message||area.querySelector(`[data-msg-id="${CSS.escape(message.id)}"]`))return;
@@ -412,6 +444,25 @@
     };
     socket.onerror=()=>{if(state.socket===socket)setStatus('Live-Verbindung gestört · Fallback aktiv','fallback');};
   }
+  async function loadCompletionPanel(id){
+    const panel=$('#dj54-review-panel');
+    if(!panel||state.currentMatch!==id)return;
+    try{
+      const s=await api(`/api/matches/${encodeURIComponent(id)}/completion`);
+      if(!panel.isConnected||state.currentMatch!==id)return;
+      const msg=s.completed?'Auftrag von beiden Seiten abgeschlossen':
+        s.confirmed_by_me?'Deine Bestätigung gespeichert · Auf die andere Seite warten':
+        s.confirmed_by_other?'Die andere Seite hat abgeschlossen · Bitte bestätigen':'Nach dem Auftrag können beide Seiten den Abschluss bestätigen.';
+      panel.innerHTML=`<h3>Auftrag & Bewertung ⭐</h3><p>${esc(msg)}</p>
+        ${!s.confirmed_by_me?'<button type="button" class="dj54-confirm" data-dj54-confirm>Auftrag abgeschlossen bestätigen</button>':''}
+        ${s.completed&&!s.my_review?`<form id="dj54-review-form"><label>Sterne vergeben
+          <select name="stars" required><option value="">Bitte bewerten</option>${[1,2,3,4,5].map(n=>`<option value="${n}">${'★'.repeat(n)} (${n}/5)</option>`).join('')}</select></label>
+          <label>Kommentar (optional)<textarea name="comment" maxlength="1000" rows="2"></textarea></label>
+          <button type="submit" class="dj54-confirm">Bewertung senden</button></form>`:''}
+        ${s.my_review?`<p class="dj54-stars">Deine Bewertung: ${'★'.repeat(s.my_review.stars)} (${s.my_review.stars}/5)</p>`:''}
+        ${s.completed&&s.their_review?`<p class="dj54-stars">Erhaltene Bewertung: ${'★'.repeat(s.their_review.stars)} (${s.their_review.stars}/5)</p>`:''}`;
+    }catch(e){if(panel.isConnected)panel.textContent='Bewertungsstatus momentan nicht verfügbar.';console.warn(e);}
+  }
   async function settingsView(){render(shell(`<h1 class="title">Einstellungen</h1>
     <div class="sheet"><div class="card-body"><strong>${esc(state.user?.email)}</strong>
     <p class="subtitle">${state.user?.role==='worker'?'Jobsuchend':'Personal suchend'}</p>
@@ -430,6 +481,7 @@
       if(!window.confirm(ask))return;await api('/api/jobs/'+encodeURIComponent(status.dataset.jobId)+
       '/status',{method:'PATCH',body:JSON.stringify({action})});toast(action==='archive'?
         'Job archiviert':action==='pause'?'Job pausiert':'Job reaktiviert');return myJobsView();}
+    if(event.target.closest('[data-dj54-confirm]')){await api(`/api/matches/${encodeURIComponent(state.currentMatch)}/confirm-completion`,{method:'POST'});await loadCompletionPanel(state.currentMatch);return;}
     const go=event.target.closest('[data-go]');if(go)return navigate(go.dataset.go);
     const s=event.target.closest('[data-swipe]');if(s)return swipe(s.dataset.swipe);
     const m=event.target.closest('[data-open-match]');
@@ -455,6 +507,7 @@
         is_active:original?original.is_active:true};await api(original?'/api/jobs/'+encodeURIComponent(original.id):
         '/api/jobs',{method:original?'PUT':'POST',body:JSON.stringify(body)});state.editingJob=null;toast(original?
           'Job aktualisiert!':'Job veröffentlicht!');return navigate('my-jobs');}
+    if(form.id==='dj54-review-form'){await api(`/api/matches/${encodeURIComponent(state.currentMatch)}/reviews`,{method:'POST',body:JSON.stringify({stars:Number(v.stars),comment:v.comment||null})});toast('Bewertung abgegeben!');await loadCompletionPanel(state.currentMatch);return;}
     if(form.id==='chat-form'){const content=v.content?.trim();if(!content)return;
       const input=form.querySelector('input');input.value='';try{if(state.socket?.readyState===1)
         {state.socket.send(JSON.stringify({type:'message',content}));}

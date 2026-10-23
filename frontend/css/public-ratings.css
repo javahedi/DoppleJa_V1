@@ -1,0 +1,24 @@
+/* Phase 5.4B: reputation from actual received completion reviews only. */
+.dj54b-profile-panel{margin:16px 0 20px;padding:18px;border-radius:20px;border:1px solid #ead6ac;background:rgba(255,255,255,.78);box-shadow:0 9px 25px rgba(59,18,103,.05)}
+.dj54b-profile-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.dj54b-profile-heading h2{font-size:18px;margin:0;color:#36136e}
+.dj54b-profile-heading>span{font-size:11px;color:#665777}
+.dj54b-rating{display:flex;gap:5px;align-items:baseline;flex-wrap:wrap;font-size:13px;color:#584374;margin:8px 0 12px;line-height:1.45}
+.dj54b-rating>span:first-child,.dj54b-review-stars{color:#b17900}
+.dj54b-rating strong{color:#30105d;font-size:15px}
+.dj54b-rating-large{font-size:15px}
+.dj54b-rating-large strong{font-size:21px}
+.dj54b-unrated{color:#766784}
+.dj54b-history{border-top:1px solid #ede1c4;padding-top:12px}
+.dj54b-history>summary{cursor:pointer;color:#5821bc;font-weight:700;font-size:14px;list-style:none;padding:6px 0}
+.dj54b-history>summary::-webkit-details-marker{display:none}
+.dj54b-review{border-top:1px solid #eee6d7;padding:12px 0}
+.dj54b-review-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.dj54b-review-top time{font-size:12px;color:#746583}
+.dj54b-review-stars{letter-spacing:1px;font-size:19px}
+.dj54b-review p{font-size:13px;color:#493764;margin:5px 0 0;overflow-wrap:anywhere;white-space:pre-wrap}
+.dj54b-muted{font-size:12px;color:#756783}
+.dj54b-list-rating{padding:8px 0;display:flex;gap:5px;flex-wrap:wrap;align-items:baseline;color:#574278}
+.dj54b-list-rating>span{font-size:12px}
+.dj54b-list-rating>.dj54b-rating{margin:0}
+@media(max-width:390px){.dj54b-profile-panel{padding:14px}.dj54b-list-rating{display:block}}

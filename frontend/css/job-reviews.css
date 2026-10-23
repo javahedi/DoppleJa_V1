@@ -1,0 +1,7 @@
+/* Phase 5.4 — two-sided job completion and star reviews */
+.dj54-review-panel{background:rgba(255,255,255,.84);border:1px solid #e5d6fa;border-radius:16px;padding:13px 15px;margin:12px 0;color:#341468}
+.dj54-review-panel h3{font-size:15px;margin:0 0 7px}.dj54-review-panel p{font-size:12px;margin:6px 0 10px;line-height:1.5}
+.dj54-review-panel label{display:block;font-size:12px;font-weight:700;margin:10px 0 5px}
+.dj54-review-panel select,.dj54-review-panel textarea{width:100%;padding:12px;font-size:16px;background:#fff;border:1px solid #daccf3;border-radius:10px;color:#30105b}
+.dj54-review-panel .dj54-confirm{border:0;border-radius:12px;background:#6547f5;color:#fff;font-weight:700;padding:11px 13px;width:100%;cursor:pointer;margin-top:7px}
+.dj54-review-panel .dj54-stars{color:#8d5e00;font-size:13px;font-weight:700}

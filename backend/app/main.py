@@ -14,8 +14,11 @@ from backend.app.modules.likes.router import router as likes_router
 
 from backend.app.modules.match_summaries.router import router as match_summaries_router
 
+from backend.app.modules.completions.router import router as completion_router
+
 app = FastAPI(title="DoppleJa API", description="Two sides. Two Yes. One Match.", version="1.0.0")
 app.include_router(auth_router)
+app.include_router(completion_router)
 app.include_router(match_summaries_router)
 app.include_router(likes_router)
 app.include_router(workers_router)

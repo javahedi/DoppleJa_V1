@@ -12,3 +12,6 @@ from backend.app.models.swipe import Swipe
 from backend.app.models.match import Match
 
 from backend.app.models.message import Message
+
+from backend.app.models.completion import CompletionConfirmation
+from backend.app.models.review import Review
