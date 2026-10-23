@@ -224,8 +224,21 @@
   async function swipe(action){if(state.busy)return;let job_id,worker_id;if(state.user.role==='worker'){job_id=state.jobs[0]?.id;}
   else{job_id=state.selectedJob;worker_id=state.candidates[0]?.user_id;}if(!job_id)return;state.busy=true;
   try{const response=await api('/api/swipes',{method:'POST',body:JSON.stringify({job_id,action,...worker_id?{worker_id}:{}})});
-  toast(response.is_match?'🎉 It’s a Match!':action==='like'?'♥ Gefällt dir!':'Weiter geht’s');
-  await discoveryView();}catch(e){toast(e.message);}finally{state.busy=false;}}
+  if(!response.is_match)toast(action==='like'?'♥ Gefällt dir!':'Weiter geht’s');
+  await discoveryView();if(response.is_match)showMatchCelebration();}catch(e){toast(e.message);}finally{state.busy=false;}}
+  function showMatchCelebration(){
+    const old=document.querySelector('.dj2-celebration');if(old)old.remove();
+    const overlay=document.createElement('div');overlay.className='dj2-celebration';
+    overlay.innerHTML=`<div class="dj2-celebration-panel" role="dialog" aria-modal="true" aria-label="Neues Match">
+      <div class="dj2-celebration-icon">🤝</div><h2>It's a Match!</h2>
+      <p>Ihr habt euch beide geliked. Jetzt könnt ihr miteinander chatten.</p>
+      <button class="btn dj2-celebration-chats" type="button">Zu den Nachrichten →</button>
+      <button class="dj2-celebration-close" type="button">Weiter entdecken</button></div>`;
+    overlay.querySelector('.dj2-celebration-close').addEventListener('click',()=>overlay.remove());
+    overlay.querySelector('.dj2-celebration-chats').addEventListener('click',()=>{overlay.remove();navigate('chats');});
+    document.body.appendChild(overlay);
+    overlay.querySelector('.dj2-celebration-chats')?.focus();
+  }
   const jobStatus = j=>j.archived_at?'Archiviert':j.is_active?'Aktiv':'Pausiert';
   async function myJobsView(){
     if(state.user?.role!=='employer')return navigate('discover');
@@ -302,53 +315,103 @@
   }
     const fullDate = v => v ? new Date(v).toLocaleString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '';
   const summaryHeader = m => `${esc(m.job_title)} · ${esc(m.other_party_name)}`;
-  const matchCard = m => `<article class="list-card match-summary-card">
-    <div class="avatar">🤝</div>
-    <div class="grow"><strong>${summaryHeader(m)}</strong>
-      <small>${esc(m.city)} · ${m.has_messages?'Unterhaltung läuft':'Neues Match'}</small>
-      <small>${m.has_messages ? `${esc(m.last_message.content)} · ${fullDate(m.last_message.created_at)}` : `Match am ${fullDate(m.matched_at)}`}</small>
-    </div><button data-open-match="${esc(m.match_id)}">${m.has_messages?'Chat öffnen':'Nachricht senden'} →</button>
-  </article>`;
+  // PHASE_52C_PREMIUM_MATCHES_CHAT: summary data from /api/match-summaries.
+  const matchCard = m => {
+    const newer = !m.has_messages;
+    const stamp = newer ? m.matched_at : m.last_message?.created_at;
+    const teaser = newer ? 'Ihr könnt jetzt miteinander schreiben.' : (m.last_message?.content || 'Unterhaltung läuft');
+    return `<article class="dj2-match" aria-label="Match mit ${esc(m.other_party_name)}">
+      <div class="dj2-match-icon" aria-hidden="true">🤝</div>
+      <div class="dj2-match-content">
+        <strong class="dj2-match-person">${esc(m.other_party_name)}</strong>
+        <div class="dj2-match-job">${esc(m.job_title)} · ${esc(m.city||'')}</div>
+        <div class="dj2-match-meta"><span class="dj2-match-status ${newer?'dj2-new':'dj2-active'}">${newer?'Neues Match':'Unterhaltung läuft'}</span><time>${fullDate(stamp)}</time></div>
+        <p class="dj2-match-preview">${esc(teaser)}</p>
+      </div>
+      <button type="button" class="dj2-match-open" data-open-match="${esc(m.match_id)}" aria-label="Chat mit ${esc(m.other_party_name)} öffnen">Chat öffnen <span aria-hidden="true">→</span></button>
+    </article>`;
+  };
   async function matchesView(){
     if(!state.user)return navigate('login');
     state.matches=await api('/api/match-summaries');
-    render(shell(`<h1 class="title">Deine Matches 🤝</h1><p class="subtitle">Neue Matches und laufende Unterhaltungen.</p>
-      ${state.matches.length?state.matches.map(matchCard).join(''):`<div class="empty"><div class="emoji">🤝</div><h3>Noch kein Match</h3>
-        <p>Wenn ihr euch beide liked, erscheint euer Match hier.</p><button class="btn" data-go="discover">Entdecken</button></div>`}`,'matches'));
+    state.matches.sort((a,b)=>new Date(b.last_message?.created_at||b.matched_at)-new Date(a.last_message?.created_at||a.matched_at));
+    render(shell(`<div class="dj2-page-label">VERBINDUNGEN</div><h1 class="title">Deine Matches 🤝</h1>
+      <p class="subtitle">Hier beginnt euer Gespräch – ganz ohne Bewerbung.</p>
+      <div class="dj2-match-list">${state.matches.length?state.matches.map(matchCard).join(''):
+        `<section class="dj2-blank"><div class="dj2-blank-icon">🤝</div><h2>Noch kein Match</h2>
+        <p>Wenn ihr beide auf ♥ tippt, findet ihr euch hier wieder.</p><button class="btn" data-go="discover">Menschen entdecken →</button></section>`}</div>`,'matches'));
   }
   async function chatsView(){
     if(!state.user)return navigate('login');
-    const summaries=await api('/api/match-summaries');
-    state.chats=summaries.sort((a,b)=>new Date(b.last_message?.created_at||b.matched_at)-new Date(a.last_message?.created_at||a.matched_at));
-    render(shell(`<h1 class="title">Nachrichten</h1><p class="subtitle">Deine Matches und Unterhaltungen.</p>
-      ${state.chats.length?state.chats.map(matchCard).join(''):`<div class="empty"><div class="emoji">💬</div><h3>Hier ist es noch ruhig</h3>
-        <p>Deine Matches erscheinen hier, damit ihr ein Gespräch beginnen könnt.</p><button class="btn" data-go="likes">Meine Likes</button></div>`}`,'chats'));
+    state.chats=await api('/api/match-summaries');
+    state.chats.sort((a,b)=>new Date(b.last_message?.created_at||b.matched_at)-new Date(a.last_message?.created_at||a.matched_at));
+    render(shell(`<div class="dj2-page-label">DOPPLEJA · NACHRICHTEN</div><h1 class="title">Nachrichten</h1>
+      <p class="subtitle">Deine Matches und laufenden Unterhaltungen.</p>
+      <div class="dj2-match-list">${state.chats.length?state.chats.map(matchCard).join(''):
+        `<section class="dj2-blank"><div class="dj2-blank-icon">💬</div><h2>Hier ist es noch ruhig</h2>
+        <p>Ein gegenseitiger Like schaltet den Chat frei.</p><button class="btn" data-go="discover">Entdecken →</button></section>`}</div>`,'chats'));
   }
-  async function conversationView(){if(!state.currentMatch)return navigate('chats');const id=state.currentMatch;const messages=await
-    api(`/api/matches/${encodeURIComponent(id)}/messages?limit=100`);const bubbles=messages.map(m=>`<div data-msg-id="${esc(m.id)}
-    " class="bubble ${m.sender_id===state.user.id?'mine':''}">${esc(m.content)}<time>${date(m.created_at)}</time></div>`).join('');
-    render(shell(`<div class="row"><button class="back" data-go="chats">←</button><div class="grow"><strong>Dein Match 🤝</strong>
-      <div class="small-muted" id="chat-status">Verbinde …</div></div></div><div class="chat-messages" id="messages">
-      ${bubbles||'<div class="empty">Sag Hallo! 👋</div>'}</div><form id="chat-form" class="chat-compose">
-      <input name="content" maxlength="2000" placeholder="Nachricht schreiben …" required autocomplete="off">
-      <button type="submit" aria-label="Nachricht senden">➤</button></form>`,'chats'));const area=$('#messages');
-      area.scrollTop=area.scrollHeight;connectChat(id);}
+  async function conversationView(){
+    if(!state.currentMatch)return navigate('chats');
+    const id=state.currentMatch;
+    const [messages,summaries]=await Promise.all([
+      api(`/api/matches/${encodeURIComponent(id)}/messages?limit=100`),
+      api('/api/match-summaries')
+    ]);
+    const match=summaries.find(m=>m.match_id===id);
+    const displayName=match?.other_party_name||'Dein Match';
+    const jobTitle=match?.job_title||'DoppleJa Chat';
+    const bubbles=messages.map(m=>`<div data-msg-id="${esc(m.id)}" class="bubble ${m.sender_id===state.user.id?'mine':''}">${esc(m.content)}<time>${date(m.created_at)}</time></div>`).join('');
+    render(shell(`<section class="dj2-conversation">
+      <header class="dj2-chat-header"><button class="back" data-go="chats" aria-label="Zu den Nachrichten">←</button>
+        <div class="dj2-chat-avatar" aria-hidden="true">🤝</div><div class="dj2-chat-identity">
+          <strong>${esc(displayName)}</strong><div class="dj2-chat-job">${esc(jobTitle)}</div>
+          <span class="dj2-chat-status" id="chat-status" role="status">Verbindung wird hergestellt …</span>
+        </div></header>
+      <div class="dj2-chat-tip">Ihr habt euch gegenseitig geliked. Jetzt könnt ihr euch direkt austauschen.</div>
+      <div class="chat-messages dj2-messages" id="messages" aria-label="Chatverlauf" aria-live="polite">${bubbles||'<div class="dj2-chat-empty">Sag Hallo! 👋</div>'}</div>
+      <form id="chat-form" class="chat-compose dj2-compose">
+        <input name="content" maxlength="2000" placeholder="Nachricht schreiben …" required autocomplete="off" aria-label="Nachricht schreiben">
+        <button type="submit" aria-label="Nachricht senden">➤</button></form></section>`,'chats'));
+    const area=$('#messages');if(area)area.scrollTop=area.scrollHeight;
+    connectChat(id);
+  }
   function appendMessage(message){const area=$('#messages');
     if(!area||!message||area.querySelector(`[data-msg-id="${CSS.escape(message.id)}"]`))return;
-    if(area.querySelector('.empty'))area.innerHTML='';const div=document.createElement('div');
+    if(area.querySelector('.empty, .dj2-chat-empty'))area.innerHTML='';const div=document.createElement('div');
     div.className='bubble'+(message.sender_id===state.user.id?' mine':'');div.dataset.msgId=message.id;div.textContent=message.content;
     const time=document.createElement('time');time.textContent=date(message.created_at);div.appendChild(time);area.appendChild(div);
     area.scrollTop=area.scrollHeight;}
-  function connectChat(id){closeChat();const protocol=location.protocol==='https:'?'wss:':'ws:';
-    const socket=new WebSocket(`${protocol}//${location.host}/ws/matches/${encodeURIComponent(id)}`);
-    state.socket=socket;const status=$('#chat-status');socket.onopen=()=>{if(status)status.textContent='Live verbunden';};
-    socket.onmessage=event=>{try{const data=JSON.parse(event.data);if(data.type==='message')appendMessage(data.message);
-      else if(data.type==='error')toast(data.detail);}catch(e){console.warn(e);}};
-      socket.onclose=()=>{if(status)status.textContent='Offline · Nachrichten werden geladen';};
-      socket.onerror=()=>{if(status)status.textContent='Verbindungsproblem';};
-      state.chatPoll=setInterval(async()=>{if(state.page!=='conversation')return;
-        try{const items=await api(`/api/matches/${encodeURIComponent(id)}/messages?limit=100`);
-        items.forEach(appendMessage);}catch(e){console.warn(e);}},8000);}
+  function connectChat(id){
+    closeChat();
+    const protocol=location.protocol==='https:'?'wss:':'ws:';
+    const status=$('#chat-status');
+    const setStatus=(message,mode)=>{if(status){status.textContent=message;status.dataset.mode=mode;}};
+    // Polling is a REST fallback and also refreshes messages when the socket isn't available.
+    const refresh=async()=>{
+      if(state.page!=='conversation'||state.currentMatch!==id)return;
+      try{const items=await api(`/api/matches/${encodeURIComponent(id)}/messages?limit=100`);items.forEach(appendMessage);}
+      catch(e){console.warn('Chat refresh:',e);}
+    };
+    state.chatPoll=setInterval(refresh,8000);
+    let socket;
+    try{socket=new WebSocket(`${protocol}//${location.host}/ws/matches/${encodeURIComponent(id)}`);}
+    catch(e){setStatus('Live-Chat nicht verfügbar · Senden weiterhin möglich','fallback');return;}
+    state.socket=socket;
+    socket.onopen=()=>{if(state.socket===socket)setStatus('Live verbunden','online');};
+    socket.onmessage=event=>{
+      if(state.socket!==socket)return;
+      try{const data=JSON.parse(event.data);
+        if(data.type==='message')appendMessage(data.message);
+        else if(data.type==='error')toast(data.detail||'Nachricht konnte nicht gesendet werden.');
+      }catch(e){console.warn('Chat message:',e);}
+    };
+    socket.onclose=()=>{
+      if(state.socket!==socket)return;
+      setStatus('Offline · Nachrichten über sichere Verbindung verfügbar','fallback');refresh();
+    };
+    socket.onerror=()=>{if(state.socket===socket)setStatus('Live-Verbindung gestört · Fallback aktiv','fallback');};
+  }
   async function settingsView(){render(shell(`<h1 class="title">Einstellungen</h1>
     <div class="sheet"><div class="card-body"><strong>${esc(state.user?.email)}</strong>
     <p class="subtitle">${state.user?.role==='worker'?'Jobsuchend':'Personal suchend'}</p>
