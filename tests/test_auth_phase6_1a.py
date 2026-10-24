@@ -58,7 +58,7 @@ def test_resend_response_is_generic_and_existing_account_recovers(monkeypatch):
         original=parse_qs(urlparse(links[0]).query)['token'][0]
         newest=parse_qs(urlparse(links[1]).query)['token'][0]
         assert original != newest
-        assert client.get('/api/auth/verify-email',params={'token':newest}).status_code==200
+        assert client.post('/api/auth/verify-email',data={'token':newest}).status_code==200
         assert client.post('/api/auth/resend-verification',json={'email':email}).status_code==200
         assert len(links)==2
     with SessionLocal() as db:

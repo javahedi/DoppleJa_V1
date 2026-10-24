@@ -16,7 +16,7 @@ def logged_in_worker(monkeypatch):
     with TestClient(app) as client:
         assert client.post("/api/auth/register", json={"email":email,"password":"Strong-passphrase-123","role":"worker"}).status_code == 201
         token = parse_qs(urlparse(links[0]).query)["token"][0]
-        assert client.get("/api/auth/verify-email", params={"token": token}).status_code == 200
+        assert client.post("/api/auth/verify-email", data={"token": token}).status_code == 200
         assert client.post("/api/auth/login", json={"email":email,"password":"Strong-passphrase-123"}).status_code == 200
         yield client
     with SessionLocal() as db:
@@ -47,7 +47,7 @@ def test_employer_cannot_edit_worker_profile(monkeypatch):
     with TestClient(app) as client:
         assert client.post("/api/auth/register",json={"email":email,"password":"Strong-passphrase-123","role":"employer"}).status_code==201
         token=parse_qs(urlparse(links[0]).query)["token"][0]
-        assert client.get("/api/auth/verify-email",params={"token":token}).status_code==200
+        assert client.post("/api/auth/verify-email",data={"token":token}).status_code==200
         assert client.post("/api/auth/login",json={"email":email,"password":"Strong-passphrase-123"}).status_code==200
         assert client.put("/api/workers/me",json={"display_name":"Not a worker"}).status_code==403
     with SessionLocal() as db:

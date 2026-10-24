@@ -40,8 +40,8 @@ def test_register_verify_login_me_logout(account):
     assert signup(client, email).status_code == 409
     assert client.post("/api/auth/login", json={"email": email, "password": "Strong-passphrase-123"}).status_code == 403
     token = parse_qs(urlparse(links[0]).query)["token"][0]
-    assert client.get("/api/auth/verify-email", params={"token": token}).status_code == 200
-    assert client.get("/api/auth/verify-email", params={"token": token}).status_code == 400
+    assert client.post("/api/auth/verify-email", data={"token": token}).status_code == 200
+    assert client.post("/api/auth/verify-email", data={"token": token}).status_code == 400
     wrong = client.post("/api/auth/login", json={"email": email, "password": "incorrect"})
     assert wrong.status_code == 401
     logged_in = client.post("/api/auth/login", json={"email": email, "password": "Strong-passphrase-123"})

@@ -26,3 +26,10 @@ def isolate_auth_rate_limits(monkeypatch, request):
         "_throttle",
         lambda *args, **kwargs: True,
     )
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "real_rate_limit: tests that exercise actual rate limiting",
+    )

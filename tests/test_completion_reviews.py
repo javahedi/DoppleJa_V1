@@ -18,7 +18,7 @@ def scenario(monkeypatch):
         client=TestClient(app);accounts.append((client,email))
         assert client.post('/api/auth/register',json={'email':email,'password':'Long-test-password-123','role':role}).status_code==201
         token=parse_qs(urlparse(links.pop()).query)['token'][0]
-        assert client.get('/api/auth/verify-email',params={'token':token}).status_code==200
+        assert client.post('/api/auth/verify-email',data={'token':token}).status_code==200
         result=client.post('/api/auth/login',json={'email':email,'password':'Long-test-password-123'})
         assert result.status_code==200
         return client,result.json()['id']
