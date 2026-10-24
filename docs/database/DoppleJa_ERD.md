@@ -4,7 +4,7 @@
 **Audience:** DoppleJa collaborators
 **Maintainer and final merge decision-maker:** Repository owner (`javahedi`)
 
-This document provides a practical ERD for the current DoppleJa data model, focused on the core application entities used by authentication, profiles, jobs, swipes, matches, and chat.
+This document provides a practical ERD for the current DoppleJa data model, focused on the core application entities used by authentication, profiles, jobs, swipes, matches, chat, job completion, and two-sided star reviews.
 
 > Important: This ERD is intended as a developer reference. The source of truth for schema creation remains:
 > 1. SQLAlchemy models in `backend/app/models/`
@@ -85,6 +85,23 @@ erDiagram
         timestamptz created_at
     }
 
+    COMPLETION_CONFIRMATIONS {
+        uuid id PK
+        uuid match_id FK
+        uuid user_id FK
+        timestamptz confirmed_at
+    }
+
+    REVIEWS {
+        uuid id PK
+        uuid match_id FK
+        uuid reviewer_id FK
+        uuid reviewee_id FK
+        int stars
+        string comment
+        timestamptz created_at
+    }
+
     MESSAGES {
         uuid id PK
         uuid match_id FK
@@ -105,6 +122,13 @@ erDiagram
     JOBS ||--o{ MATCHES : generates
     WORKER_PROFILES ||--o{ MATCHES : matched_to
     EMPLOYER_PROFILES ||--o{ MATCHES : matched_to
+
+    MATCHES ||--o{ COMPLETION_CONFIRMATIONS : has_confirmations
+    USERS ||--o{ COMPLETION_CONFIRMATIONS : confirms
+
+    MATCHES ||--o{ REVIEWS : has_reviews
+    USERS ||--o{ REVIEWS : writes
+    USERS ||--o{ REVIEWS : receives
 
     MATCHES ||--o{ MESSAGES : contains
     USERS ||--o{ MESSAGES : sends
@@ -155,6 +179,24 @@ Created only after both sides Like each other.
 - Connects one worker and one employer around one specific job.
 - Unlocks private chat.
 
+### `completion_confirmations`
+Records each participant's independent confirmation of work completion for a match.
+
+- References `matches.id` through `match_id`.
+- References `users.id` through `user_id`.
+- Unique constraint: (`match_id`, `user_id`) prevents duplicate confirmations by the same participant.
+- Completion is considered mutually confirmed when both matched participants have confirmed.
+
+### `reviews`
+Stores the one-to-five-star feedback submitted after both participants confirm job completion.
+
+- References `matches.id` through `match_id`.
+- `reviewer_id` identifies the user writing the review; `reviewee_id` identifies the user receiving it.
+- Unique constraint: (`match_id`, `reviewer_id`) prevents multiple reviews by the same person for one match.
+- Database checks enforce `stars` from 1 to 5 and prevent self-reviews.
+- `comment` is optional, up to 1000 characters.
+- Public reputation is calculated from **received** reviews, including the count; it is not an independent stored score in either profile table.
+
 ### `messages`
 Stores chat messages inside a match.
 
@@ -177,6 +219,10 @@ employer likes worker ┘
 
 if both liked:
     swipes -> matches -> messages
+                   |
+                   +-> completion_confirmations (worker + employer)
+                               |
+                               +-> reviews (1–5 stars, both directions)
 ```
 
 ---
@@ -192,6 +238,8 @@ if both liked:
 | `swipes` | Like/Pass actions | links worker, employer, and job |
 | `matches` | Mutual Yes | links worker, employer, and job |
 | `messages` | Chat after matching | belongs to a match |
+| `completion_confirmations` | Each side confirms the job finished | references `matches` and `users` |
+| `reviews` | Feedback and 1–5 stars | references match, reviewer, and reviewee |
 
 ---
 
@@ -236,6 +284,18 @@ docker compose exec -T db sh -lc \
 
 ---
 
-## 7) Recommended next improvement
+## 7) Phase 5.4 database constraints and public ratings
+
+The new Phase 5.4 tables and constraints above were checked against:
+
+- `backend/app/models/completion.py`
+- `backend/app/models/review.py`
+- `backend/alembic/versions/8f24c5d63a10_completion_reviews.py`
+
+**Example:** If a worker has received ratings of 5, 5, 4, 5 and 3 from completed jobs, the public profile should show **4.4 / 5 (5 Bewertungen)**. A worker/employer with no received reviews should display **Noch keine Bewertungen**. Review counts should count review rows, not the number of matched jobs or reviews written by that user.
+
+**Important:** This document is a combined functional/core-entity ERD, not a full introspected dump of every column and supporting database table. The Phase 5.4 table names, constraints, and links are verified against source files provided for the implementation; compare with live PostgreSQL after migrations for a definitive physical schema.
+
+## 8) Recommended next improvement
 
 If you want a **more exact ERD from the live database**, the next step is to generate one from the actual PostgreSQL schema or from your SQLAlchemy models. That can later be exported as SVG/PNG for your team documentation.
