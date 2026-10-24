@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from backend.app.core.database import get_db
 from backend.app.models import User
 from backend.app.modules.auth import service
-from backend.app.modules.auth.schemas import LoginRequest, MessageOut, RegisterRequest, UserOut
+from backend.app.modules.auth.schemas import LoginRequest, MessageOut, RegisterRequest, ResendVerificationRequest, UserOut
 from backend.app.modules.auth.security import COOKIE_NAME, make_session, read_session
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
@@ -16,6 +16,12 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 def register(body: RegisterRequest, db: Session = Depends(get_db)):
     service.register(db, body.email, body.password, body.role)
     return {"message": "Account created. Please verify your email."}
+
+
+@router.post("/resend-verification", response_model=MessageOut)
+def resend_verification(body: ResendVerificationRequest, db: Session = Depends(get_db)):
+    service.resend_verification(db, body.email)
+    return {"message": "If the address has an unverified account, a verification email may be sent."}
 
 
 @router.get("/verify-email", response_model=MessageOut)

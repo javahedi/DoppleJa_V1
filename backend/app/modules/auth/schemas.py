@@ -25,3 +25,7 @@ class UserOut(BaseModel):
 
 class MessageOut(BaseModel):
     message: str
+
+
+class ResendVerificationRequest(BaseModel):
+    email: EmailStr
