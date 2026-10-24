@@ -1,3 +1,4 @@
+from backend.app.core.auth_protection import AuthProtectionMiddleware
 from backend.app.modules.frontend.router import router as frontend_router, assets as frontend_assets
 from fastapi import FastAPI
 from backend.app.modules.auth.router import router as auth_router
@@ -17,6 +18,7 @@ from backend.app.modules.match_summaries.router import router as match_summaries
 from backend.app.modules.completions.router import router as completion_router
 
 app = FastAPI(title="DoppleJa API", description="Two sides. Two Yes. One Match.", version="1.0.0")
+app.add_middleware(AuthProtectionMiddleware)
 app.include_router(auth_router)
 app.include_router(completion_router)
 app.include_router(match_summaries_router)
