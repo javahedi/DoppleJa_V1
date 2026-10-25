@@ -1,0 +1,91 @@
+/* DoppleJa Design System V1 — shared main-tab header and bottom navigation.
+   Load AFTER page-specific styles. No changes to auth screens or chat conversations. */
+:root{--dj-brand-violet:#351071;--dj-brand-purple:#6324df;--dj-brand-gold:#ffb319;--dj-header-height:64px;--dj-logo-width:180px}
+/* Standardized masthead: three real columns guarantee an optically centered logo. */
+#app .djv2-discover .djv2-top,
+#app .dj-matches-v3 .dj-mv-head,
+#app .dj-chat3-list > .header,
+#app .dj-pv2-view .dj-pv2-mast{
+  display:grid!important;
+  grid-template-columns:40px minmax(0,1fr) 40px!important;
+  align-items:center!important;
+  justify-items:stretch;
+  gap:8px!important;
+  height:var(--dj-header-height)!important;
+  min-height:var(--dj-header-height)!important;
+  margin:0 0 22px!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+}
+#app .djv2-top > img,
+#app .dj-mv-head > img,
+#app .dj-chat3-list > .header > .dj-chat3-brand,
+#app .dj-pv2-mast > img.dj-pv2-logo{
+  width:min(var(--dj-logo-width),100%)!important;
+  max-width:100%!important;
+  height:48px!important;
+  max-height:48px!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  justify-self:center!important;
+  grid-column:2!important;
+  grid-row:1!important;
+  display:block!important;
+}
+/* Reserve the left slot; settings/edit/back actions remain at the right or left. */
+#app .djv2-top > button,
+#app .dj-mv-head > button,
+#app .dj-chat3-list > .header > button,
+#app .dj-pv2-mast > .dj-pv2-edit-top{
+  grid-column:3!important;
+  grid-row:1!important;
+  justify-self:end!important;
+  width:40px!important;
+  height:40px!important;
+  min-width:40px!important;
+  min-height:40px!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:#f4efff!important;
+  color:#4b1aab!important;
+}
+#app .dj-pv2-mast > .dj-pv2-back{
+  grid-column:1!important;grid-row:1!important;justify-self:start!important;
+  width:40px!important;height:40px!important;display:grid!important;place-items:center!important;
+  border-radius:12px!important;background:#f4efff!important;color:#4b1aab!important;
+}
+/* The chats list comes from the shell header; ensure its logo replaces legacy text. */
+#app .dj-chat3-list > .header > .logo{display:none!important}
+/* Consistent header offsets: page content starts immediately after the common masthead. */
+#app .djv2-discover,
+#app .dj-matches-v3{min-width:0}
+/* Consistent tab bar: 4 true SVG icons, same sizes, spacing and active state. */
+#app + .bottom-nav,
+#app .bottom-nav,
+.app-shell > .bottom-nav{background:#fff!important}
+#app .bottom-nav,
+.app-shell .bottom-nav{
+  border-top:1px solid #ece6f8!important;
+  padding-top:8px!important;
+  padding-bottom:max(9px,env(safe-area-inset-bottom))!important;
+  min-height:70px!important;
+  gap:0!important;
+}
+.app-shell .bottom-nav button[data-dj-nav-icon="v1"]{
+  flex:1!important;min-width:0!important;display:flex!important;
+  flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:5px!important;color:#817a9e!important;font-size:11px!important;font-weight:500!important;
+  white-space:nowrap!important;background:transparent!important;border:0!important;
+  padding:4px 2px!important;line-height:1.25!important;
+}
+.app-shell .bottom-nav button[data-dj-nav-icon="v1"].active{color:var(--dj-brand-purple)!important;font-weight:750!important}
+.app-shell .bottom-nav button[data-dj-nav-icon="v1"] .dj-nav-icon{display:grid;place-items:center;width:25px;height:25px;flex:none}
+.app-shell .bottom-nav button[data-dj-nav-icon="v1"] .dj-nav-icon svg{display:block;width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.app-shell .bottom-nav button[data-dj-nav-icon="v1"].active .dj-nav-icon svg{stroke-width:2.4}
+.app-shell .bottom-nav button[data-dj-nav-icon="v1"]:focus-visible{outline:2px solid #6430e0;outline-offset:-3px;border-radius:9px}
+/* Prevent legacy per-page nav overrides from resizing the brand icons. */
+@media(max-width:355px){:root{--dj-logo-width:165px}#app .djv2-discover .djv2-top,#app .dj-matches-v3 .dj-mv-head,#app .dj-chat3-list > .header,#app .dj-pv2-view .dj-pv2-mast{grid-template-columns:36px minmax(0,1fr) 36px!important;gap:4px!important}}

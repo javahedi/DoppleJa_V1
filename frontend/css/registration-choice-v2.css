@@ -1,0 +1,54 @@
+/* DoppleJa registration choice V4 — image/text never overlap. */
+.dj-register-choice{box-sizing:border-box;width:100%;max-width:960px;min-width:0;min-height:100dvh;margin-inline:auto;padding:15px clamp(12px,3vw,30px) 28px;background:white;color:#210b4c;overflow-x:clip;font-family:inherit}
+.dj-register-choice *{box-sizing:border-box}
+.dj-register-header{position:relative;display:flex;align-items:center;justify-content:center;min-height:58px}
+.dj-register-back{position:absolute;left:0;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#210b4c;font-size:36px;line-height:1;padding:4px 8px;cursor:pointer}
+.dj-register-logo{display:block;width:min(225px,72%);height:auto;max-height:61px;object-fit:contain}
+.dj-register-heading{text-align:center;margin:16px auto 20px}
+.dj-register-heading h1{font-size:clamp(22px,3vw,35px);line-height:1.17;font-weight:850;letter-spacing:-.035em;margin:0}
+.dj-register-heading h1 span{color:#32106d}
+.dj-register-heading h2{font-size:clamp(18px,2.4vw,25px);color:#615979;margin:12px 0 5px;font-weight:750;line-height:1.2}
+.dj-register-heading p{font-size:clamp(12px,1.5vw,16px);color:#89839b;line-height:1.35;margin:0}
+.dj-register-grid{display:grid;gap:18px;min-width:0;container:rolecards / inline-size}
+.dj-register-card{display:flex;flex-direction:column;position:relative;min-width:0;overflow:hidden;border:1px solid #d9c5ff;border-radius:21px;background:#f9f6ff;isolation:isolate}
+.dj-register-employer{border-color:#ffdda1;background:#fffbf2}
+/* Compact card: dedicated illustration panel, followed by separate readable copy. */
+.dj-register-card-art{order:0;position:relative;display:block;flex:none;width:100%;height:170px;overflow:hidden;pointer-events:none;background:#f4edff}
+.dj-register-employer .dj-register-card-art{background:#fff3d8}
+.dj-register-card-art img{display:block;width:100%;height:100%;object-fit:contain;object-position:center center}
+.dj-register-card-copy{order:1;position:relative;z-index:1;width:100%;min-width:0;padding:17px 17px 18px;display:flex;flex-direction:column;align-items:stretch}
+.dj-register-card-symbol{width:38px;height:38px;background:#6825dc;border-radius:11px;color:#fff;display:grid;place-items:center;font-size:23px;margin-bottom:9px}
+.dj-register-employer .dj-register-card-symbol{background:#ffb91e;color:#1d0a4c}
+.dj-register-card-copy h3{font-size:clamp(22px,3vw,30px);line-height:1.12;font-weight:850;letter-spacing:-.03em;margin:0 0 9px}
+.dj-register-card-copy p{font-size:13px;line-height:1.45;color:#655d7b;margin:0 0 12px;max-width:none}
+.dj-register-card-copy ul{list-style:none;margin:0 0 16px;padding:0;color:#443763;font-size:12.5px;line-height:1.55;max-width:none}
+.dj-register-card-copy li{position:relative;padding-left:20px;overflow-wrap:anywhere;margin:2px 0}
+.dj-register-card-copy li:before{content:'✓';position:absolute;left:0;top:0;color:#6c23de;font-weight:800}
+.dj-register-employer .dj-register-card-copy li:before{color:#bd8300}
+.dj-register-cta{display:flex;align-items:center;justify-content:space-between;gap:7px;width:100%;max-width:none;min-height:48px;padding:12px 13px;border:0;border-radius:12px;font-size:13px;line-height:1.25;font-weight:800;text-align:left;cursor:pointer;margin-top:auto}
+.dj-register-cta span{font-size:22px;font-weight:500;flex-shrink:0}
+.dj-register-cta-purple{background:#6224d6;color:white}
+.dj-register-cta-yellow{background:#ffbd25;color:#210b4c}
+.dj-register-cta:focus-visible,.dj-register-back:focus-visible,.dj-register-footer button:focus-visible{outline:3px solid #8549ec;outline-offset:3px}
+.dj-register-footer{text-align:center;margin-top:22px;color:#89839b;font-size:14px}
+.dj-register-footer button{display:block;margin:5px auto 0;border:0;background:transparent;color:#6825dc;font:inherit;font-weight:750;cursor:pointer}
+/* Only when the card container itself is wide enough do we divide copy and art. */
+@container rolecards (min-width:620px){
+ .dj-register-card{display:grid;grid-template-columns:minmax(0,52%) minmax(0,48%);min-height:355px;align-items:stretch}
+ .dj-register-card-copy{grid-column:1;grid-row:1;padding:27px 24px 24px;z-index:2}
+ .dj-register-card-art{grid-column:2;grid-row:1;width:100%;height:100%;min-height:355px;background:transparent}
+ .dj-register-card-art img{object-fit:cover;object-position:center center}
+ .dj-register-card-copy h3{font-size:30px}
+ .dj-register-card-copy p{font-size:16px}
+ .dj-register-card-copy ul{font-size:15px}
+ .dj-register-cta{font-size:15px}
+}
+@media(max-width:359px){
+ .dj-register-choice{padding:10px 10px 25px}
+ .dj-register-header{min-height:52px}
+ .dj-register-logo{width:186px}
+ .dj-register-heading{margin:12px auto 17px}
+ .dj-register-heading h1{font-size:22px}
+ .dj-register-card-art{height:150px}
+ .dj-register-card-copy{padding:14px}
+}

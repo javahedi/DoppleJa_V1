@@ -1,0 +1,4 @@
+/* Scoped to the new sign-out shortcut, leave shared masthead geometry alone. */
+#app button.dj-logout-shortcut{display:grid;place-items:center;cursor:pointer}
+#app button.dj-logout-shortcut svg{width:20px;height:20px;display:block;flex:none}
+#app button.dj-logout-shortcut:focus-visible{outline:3px solid #6324df;outline-offset:3px}

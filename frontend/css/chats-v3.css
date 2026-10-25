@@ -1,0 +1,53 @@
+/* DoppleJa Chats V3: styles scoped to enhanced Chat list and conversation. */
+.dj-chat3-list,.dj-chat3-conversation{background:#fff!important;color:#211052!important}
+.dj-chat3-brand{display:block;width:min(220px,70%);height:48px;object-fit:contain;object-position:left center}
+.dj-chat3-list>.header{margin-bottom:20px!important}
+.dj-chat3-list h1.title{font-size:clamp(25px,7vw,33px);font-weight:800;letter-spacing:-.04em;margin:0 0 5px}
+.dj-chat3-list .subtitle{color:#817a9c;font-size:14px;margin:0 0 20px}
+.dj-chat3-tools{display:flex;gap:10px;align-items:center;margin:0 0 18px}
+.dj-chat3-search{height:51px;border:1px solid #e4def4;background:#faf9ff;border-radius:16px;padding:0 14px;display:flex;gap:12px;align-items:center;flex:1;min-width:0;color:#302066}
+.dj-chat3-search input{width:100%;min-width:0;border:0;background:transparent!important;outline:none;color:#241257;font-size:14px;padding:8px 0}
+.dj-chat3-search input::placeholder{color:#8e87ac}
+.dj-chat3-sort{width:48px;height:48px;flex:none;border:0;border-radius:15px;background:#f3efff;color:#5520c7;display:grid;place-items:center}
+.dj-chat3-list .dj2-match-list{display:grid;gap:0;padding:0 0 16px}
+.dj-chat3-list .dj-chat3-card{position:relative;display:grid;grid-template-columns:58px minmax(0,1fr);gap:12px;background:#fff;border:0;border-bottom:1px solid #f0ecf7;border-radius:0;box-shadow:none;margin:0;padding:15px 0;min-height:95px;align-items:center}
+.dj-chat3-list .dj-chat3-card:first-child{border-radius:16px;background:#f4efff;padding:14px 11px}
+.dj-chat3-list .dj-chat3-card[hidden]{display:none}
+.dj-chat3-list .dj-chat3-card .dj2-match-icon{height:56px;width:56px;min-width:56px;border-radius:50%;background:linear-gradient(140deg,#efe5ff,#dfd4fa);color:#5825c8;font-size:20px;box-shadow:none}
+.dj-chat3-list .dj-chat3-card .dj2-match-content{display:grid;gap:4px;min-width:0}
+.dj-chat3-list .dj-chat3-card .dj2-match-person{font-size:16px;color:#231252;font-weight:800;line-height:1.3;padding-right:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dj-chat3-list .dj-chat3-card .dj-chat3-job{font-size:11px;color:#8d83a8;order:3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dj-chat3-list .dj-chat3-card .dj2-match-preview{font-size:13px;line-height:1.45;color:#79728f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;order:2;max-width:100%;margin:0}
+.dj-chat3-list .dj-chat3-card .dj2-match-meta{position:absolute;top:16px;right:12px;display:block;margin:0}
+.dj-chat3-list .dj-chat3-card .dj-chat3-timestamp{font-size:10px;color:#8275a6;display:block;max-width:95px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dj-chat3-list .dj-chat3-card .dj-chat3-open{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;padding:0;background:transparent;border:0;cursor:pointer}
+.dj-chat3-list .dj-chat3-card:focus-within{outline:2px solid #6b2ddf;outline-offset:-2px}
+.dj-chat3-list .dj-chat3-blank{border:1px solid #ece4fa;border-radius:18px;padding:22px}
+.dj-chat3-conversation{padding-top:12px!important;padding-bottom:calc(18px + env(safe-area-inset-bottom))!important;min-height:100dvh!important}
+.dj-chat3-conversation .dj-chat3-hidden-header,.dj-chat3-hidden-nav{display:none!important}
+.dj-chat3-conversation .dj2-conversation{min-height:calc(100dvh - 36px);display:flex;flex-direction:column;gap:12px}
+.dj-chat3-conversation .dj-chat3-heading{padding:8px 0 15px;border-bottom:0;display:flex;gap:11px;align-items:center}
+.dj-chat3-conversation .dj-chat3-heading .back{width:36px;height:40px;background:transparent;color:#201254;font-size:24px;border:0;padding:0}
+.dj-chat3-conversation .dj-chat3-heading .dj2-chat-avatar{border-radius:50%;width:48px;height:48px;min-width:48px;background:#eee3ff;color:#6025d6;font-size:17px}
+.dj-chat3-conversation .dj2-chat-identity strong{font-size:17px;font-weight:800}
+.dj-chat3-conversation .dj2-chat-job{font-size:12px;color:#77708f}
+.dj-chat3-conversation .dj2-chat-status{font-size:11px}
+.dj-chat3-job-banner{display:flex;align-items:center;gap:13px;background:#f5f0ff;border:1px solid #eee8fa;border-radius:16px;padding:13px 14px;color:#26135e;cursor:pointer;min-height:70px;flex-shrink:0}
+.dj-chat3-job-icon{background:#fff;border-radius:12px;width:44px;height:44px;display:grid;place-items:center;color:#6224de;flex:none}
+.dj-chat3-job-label{font-size:14px;font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.dj-chat3-job-arrow{color:#6750a0;flex:none}
+.dj-chat3-conversation .dj-chat3-review-details{background:#fff;border:1px solid #e8ddfa;border-radius:13px;flex-shrink:0;overflow:hidden}
+.dj-chat3-conversation .dj-chat3-review-details>summary{padding:11px 14px;font-size:12px;color:#56349a;font-weight:800;cursor:pointer}
+.dj-chat3-conversation .dj54-review-panel{margin:0!important;border:0!important;box-shadow:none!important;padding:12px!important}
+.dj-chat3-conversation .dj-chat3-tip{font-size:11px;color:#8a7da9;background:#f6f1ff;padding:9px 12px;border-radius:13px;text-align:center}
+.dj-chat3-conversation #messages{flex:1;min-height:230px;max-height:none;display:flex;flex-direction:column;gap:10px;padding:16px 2px 20px;overflow-y:auto;overscroll-behavior:contain}
+.dj-chat3-conversation #messages .bubble{font-size:14px;max-width:83%;line-height:1.5;padding:12px 15px;border-radius:18px 18px 18px 5px;background:#f1eff8;color:#211052}
+.dj-chat3-conversation #messages .bubble.mine{background:linear-gradient(120deg,#7434ee,#5b1ccc);color:#fff;border-radius:18px 18px 5px 18px;align-self:flex-end}
+.dj-chat3-conversation #messages .bubble time{font-size:10px;margin-top:5px}
+.dj-chat3-conversation .dj-chat3-compose{display:flex;gap:8px;padding:12px 0 max(8px,env(safe-area-inset-bottom));margin-top:auto;position:sticky;bottom:0;background:#fff;z-index:3}
+.dj-chat3-conversation .dj-chat3-compose input{width:100%;flex:1;min-width:0;border:1px solid #e1d8f3;background:#faf9ff;border-radius:28px;min-height:50px;padding:13px 17px;font-size:14px}
+.dj-chat3-conversation .dj-chat3-compose button[type=submit]{width:49px;height:49px;min-width:49px;display:grid;place-items:center;background:#6222de;border:0;border-radius:50%;color:#fff}
+.dj-chat3-conversation .dj-chat3-compose button svg{width:21px;height:21px}
+@media(min-width:650px){.dj-chat3-conversation .dj2-conversation{min-height:calc(100dvh - 85px)}}
+@media(max-width:355px){.dj-chat3-list .dj-chat3-card{grid-template-columns:48px minmax(0,1fr);gap:10px}.dj-chat3-list .dj-chat3-card .dj2-match-icon{width:48px;height:48px;min-width:48px}.dj-chat3-list .dj-chat3-card .dj2-match-person{font-size:14px}.dj-chat3-list .dj-chat3-card .dj2-match-preview{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.dj-chat3-conversation *,.dj-chat3-list *{animation:none!important;transition:none!important}}

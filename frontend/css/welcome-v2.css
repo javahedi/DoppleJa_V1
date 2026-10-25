@@ -1,12 +1,12 @@
 /* Welcome V2 — scoped so registration, login, and other pages stay unchanged. */
-.dj-welcome-v2 {--dj-w-purple:#6326d6; --dj-w-gold:#ffb51b; position:relative; background:#fff!important; color:#21104e!important; padding:26px 22px calc(24px + env(safe-area-inset-bottom))!important; min-height:100dvh; display:flex; flex-direction:column; justify-content:space-between; align-items:stretch; gap:10px; overflow:hidden; }
+.dj-welcome-v2 {--dj-w-purple:#6815DD; --dj-w-gold:#FFB319; position:relative; background:#fff!important; color:#351071!important; padding:26px 22px calc(24px + env(safe-area-inset-bottom))!important; min-height:100dvh; display:flex; flex-direction:column; justify-content:space-between; align-items:stretch; gap:10px; overflow:hidden; }
 .dj-welcome-v2::before {content:"";pointer-events:none;position:absolute;inset:auto -35% -25% -35%;height:48%;background:radial-gradient(ellipse,#fff1ce5c 0%,transparent 65%)}
 .dj-welcome-v2 .dj-welcome-header {display:flex;justify-content:center;align-items:center; flex:0 0 auto; position:relative;z-index:1}
 .dj-welcome-logo {display:block;width:min(250px,72%);height:auto;}
 .dj-welcome-body {position:relative;z-index:1; flex:1 1 auto; min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;}
 .dj-welcome-hero {width:min(100%,430px);height:auto;max-height:min(57dvh,560px);object-fit:contain;display:block;}
 .dj-welcome-copy {text-align:center;margin:3px auto 4px;}
-.dj-welcome-copy h1 {margin:0;color:#20104c;font-size:clamp(27px,7.8vw,40px);font-weight:850;letter-spacing:-.045em;line-height:1.11;}
+.dj-welcome-copy h1 {margin:0;color:#351071;font-size:clamp(27px,7.8vw,40px);font-weight:850;letter-spacing:-.045em;line-height:1.11;}
 .dj-welcome-copy h1 span {color:var(--dj-w-gold)}
 .dj-welcome-copy p {margin:10px 0 0;color:#77718e;font-size:clamp(12px,3.35vw,15px);line-height:1.45;font-weight:500;}
 .dj-welcome-actions {position:relative;z-index:1;display:grid;gap:10px;flex:0 0 auto;}

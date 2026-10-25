@@ -4,7 +4,7 @@
 (() => {
   'use strict';
   const root = document.getElementById('app');
-  const state = { user:null, profile:null, page:'home', categories:[], jobs:[],
+  const state = { registrationRole:'worker', user:null, profile:null, page:'home', categories:[], jobs:[],
     candidates:[], mine:[], matches:[], chats:[], selectedJob:null, editingJob:null,
     currentMatch:null, socket:null, filterCity:'', filterCategory:'', filterWorkType:'', busy:false, chatPoll:null };
   const esc = v => String(v ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
@@ -31,16 +31,16 @@
   const select = (label,name,values,selected)=>`<label class="field">${esc(label)}<select name="${esc(name)}">${options(values,selected)}</select></label>`;
   const values = form => Object.fromEntries(new FormData(form).entries());
   const shell = (content, active='discover') =>
-    `<section class="screen"><header class="header"><span class="logo">DoppleJa<span style="color:#ffd900">●</span></span><button class="back" data-go="settings" aria-label="Einstellungen">⚙</button></header>${content}</section><nav class="bottom-nav" aria-label="Hauptnavigation">${(state.user?.role==='employer'?[['discover','⌂','Personal'],['my-jobs','▣','Meine Jobs'],['chats','☏','Chats'],['profile','♙','Profil']]:[['discover','⌂','Entdecken'],['likes','♡','Meine Likes'],['chats','☏','Chats'],['profile','♙','Profil']]).map(([id,ic,label])=>`<button data-go="${id}" class="${active===id?'active':''}"><span>${ic}</span>${label}</button>`).join('')}</nav>`;
+    `<section class="screen"><header class="header"><span class="logo">DoppleJa<span style="color:#ffd900">●</span></span><button class="back" data-go="settings" aria-label="Einstellungen">⚙</button></header>${content}</section><nav class="bottom-nav" aria-label="Hauptnavigation">${(state.user?.role==='employer'?[['discover','⌕','Entdecken'],['matches','♡','Matches'],['chats','☏','Chats'],['profile','♙','Profil']]:[['discover','⌕','Entdecken'],['matches','♡','Matches'],['chats','☏','Chats'],['profile','♙','Profil']]).map(([id,ic,label])=>`<button data-go="${id}" class="${active===id?'active':''}"><span>${ic}</span>${label}</button>`).join('')}</nav>`;
   const render = html => { root.innerHTML=html; root.scrollTop=0; window.scrollTo(0,0); };
   function closeChat(){if(state.socket){state.socket.onclose=null;state.socket.close();
     state.socket=null;}if(state.chatPoll){clearInterval(state.chatPoll);state.chatPoll=null;}}
   async function navigate(page){ if(state.page==='conversation'&&page!=='conversation')closeChat();state.page=page;
     render('<div class="loading">Lädt …</div>'); await run(async()=>{switch(page){case 'home':return home();
-      case 'login':return loginView();case 'register':return registerView();case 'verification':return verifyView();case 'profile':return profileView();
+      case 'login':return loginView();case 'register':return registerChoiceView();case 'register-details':return registerView();case 'verification':return verifyView();case 'profile':return profileView();
       case 'discover':return discoveryView();case 'matches':return matchesView();case 'likes':return likesView();case 'chats':return chatsView();
       case 'conversation':return conversationView();case 'job-create':return jobFormView();
-      case 'my-jobs':return myJobsView();case 'settings':return settingsView();default: return home();}});}
+      case 'my-jobs':djMatchTab='jobs';return matchesView();case 'settings':return settingsView();default: return home();}});}
 
   function home(){render(`<section class="splash dj-welcome-v2" aria-label="DoppleJa Willkommen">
     <header class="dj-welcome-header"><img src="/app-assets/assets/brand/doppleja-logo.svg" alt="DoppleJa" class="dj-welcome-logo"></header>
@@ -57,18 +57,48 @@
       'type="password" required autocomplete="current-password"')}<button class="btn pa-primary" type="submit">Einloggen →</button></form>
       <p class="center"><button class="link-btn" data-go="register">Neu hier? Jetzt registrieren</button></p>
       <p class="pa-legal">Einfach anmelden. Kein Lebenslauf, keine Bewerbung.</p></section>`);}
+  function registerChoiceView(){
+    render(`<section class="dj-register-choice" aria-label="Registrierung: Rolle auswählen">
+      <header class="dj-register-header">
+        <button type="button" class="dj-register-back" data-go="home" aria-label="Zurück zur Startseite">‹</button>
+        <img class="dj-register-logo" src="/app-assets/assets/brand/doppleja-logo.svg" alt="DoppleJa">
+      </header>
+      <div class="dj-register-heading"><h1>Willkommen bei <span>DoppleJa</span></h1>
+        <h2>Wie möchtest du starten?</h2><p>Wähle aus, wie du DoppleJa nutzen möchtest.</p></div>
+      <div class="dj-register-grid">
+        <article class="dj-register-card dj-register-worker">
+          <div class="dj-register-card-art"><img src="/app-assets/assets/images/registration/worker.webp" alt="Illustration einer Mitarbeiterin aus dem Handwerk"></div>
+          <div class="dj-register-card-copy">
+            <div class="dj-register-card-symbol" aria-hidden="true">♙</div><h3>Arbeit finden</h3>
+            <p>Entdecke Jobs, die zu dir passen – ganz ohne Lebenslauf.</p>
+            <ul><li>Passende Jobs entdecken</li><li>Einfach liken statt bewerben</li><li>Bei einem Match direkt chatten</li></ul>
+            <button type="button" class="dj-register-cta dj-register-cta-purple" data-register-role="worker">Als Arbeitnehmer starten <span aria-hidden="true">→</span></button>
+          </div>
+        </article>
+        <article class="dj-register-card dj-register-employer">
+          <div class="dj-register-card-art"><img src="/app-assets/assets/images/registration/employer.webp" alt="Illustration eines Arbeitgebers mit Tablet"></div>
+          <div class="dj-register-card-copy">
+            <div class="dj-register-card-symbol" aria-hidden="true">♙</div><h3>Mitarbeiter finden</h3>
+            <p>Finde passende Menschen für dein Unternehmen oder deinen privaten Bedarf.</p>
+            <ul><li>Geeignete Menschen entdecken</li><li>Profile kennenlernen</li><li>Bei einem Match direkt chatten</li></ul>
+            <button type="button" class="dj-register-cta dj-register-cta-yellow" data-register-role="employer">Als Arbeitgeber starten <span aria-hidden="true">→</span></button>
+          </div>
+        </article>
+      </div><footer class="dj-register-footer">Bereits registriert? <button type="button" data-go="login">Einloggen →</button></footer>
+    </section>`);
+  }
   function registerView(){
     const cards=[['restaurant-cafe','Gastronomie','cafe-card.jpg'],['handwerker','Handwerk','craft-card.jpg'],
     ['hospital-care','Gesundheit','hospital-card.jpg'],['cleaning','Reinigung','cleaning-card.jpg'],['drivers-logistics','Logistik','logistics-card.jpg']];
     const interests=cards.map(([key,label,img])=>`<label class="pa-interest"><input type="checkbox" name="interest" value="${key}">
     <img src="/app-assets/assets/${img}" alt=""><span>${label}</span></label>`).join('');
-    render(`<section class="screen premium-auth premium-register"><button class="back" data-go="home">← Zurück</button>
+    render(`<section class="screen premium-auth premium-register"><button class="back" data-go="register">← Zurück</button>
       <div class="pa-progress"><span class="pa-progress-on"></span><span></span><span></span></div><div class="pa-kicker">DEIN START IN DOPPLEJA</div>
       <h1 class="title topspace">Wer bist du?</h1><p class="subtitle">Zwei Seiten. Ein Ziel: das passende Match.</p><form class="form" id="register-form">
-      <div class="pa-role-cards"><label class="pa-role"><input type="radio" name="role" value="worker" required checked>
+      <div class="pa-role-cards"><label class="pa-role"><input type="radio" name="role" value="worker" required ${state.registrationRole==='worker'?'checked':''}>
       <img src="/app-assets/assets/worker-card.jpg" alt="Servicekraft"><span class="pa-role-copy"><strong>Ich suche einen Job</strong>
       <small>Entdecke Arbeit, die zu dir passt.</small></span><span class="pa-select-arrow">→</span></label><label class="pa-role">
-      <input type="radio" name="role" value="employer"><img src="/app-assets/assets/employer-card.jpg" alt="Arbeitgeber">
+      <input type="radio" name="role" value="employer" ${state.registrationRole==='employer'?'checked':''}><img src="/app-assets/assets/employer-card.jpg" alt="Arbeitgeber">
       <span class="pa-role-copy"><strong>Ich suche Personal</strong><small>Privatperson oder Unternehmen.</small></span>
       <span class="pa-select-arrow">→</span></label></div><div class="pa-interest-section"><div class="pa-section-heading">
       <strong>Was interessiert dich?</strong><small>Optional · bis zu 3 Bereiche</small></div><div class="pa-interests">${interests}</div>
@@ -157,104 +187,90 @@
   };
   const art = filename => '/app-assets/assets/dj-people/'+filename;
   const workLabel = type => ({minijob:'Minijob',part_time:'Teilzeit',full_time:'Vollzeit',temporary:'Tagesjob / Kurzfristig'})[type] || type || 'Job';
-  // PHASE_52B5_WORKER_DISCOVERY: photograph-first card, only real API fields.
-  const jobCard=job=>{
-    const pay=job.hourly_pay_min!=null||job.hourly_pay_max!=null
-      ?`${money(job.hourly_pay_min)}${job.hourly_pay_max!=null?' – '+money(job.hourly_pay_max):''} / Std.`:'Vergütung auf Anfrage';
-    const artwork=art(jobArtwork[job.category_id]||'job-craft.webp');
-    const description=String(job.description||'Für diese Stelle liegt noch keine ausführliche Beschreibung vor.');
-    const posted=job.created_at?new Date(job.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'}):'';
-    return `<article class="dj-b5-card" aria-label="Stellenangebot: ${esc(job.title)}">
-      <div class="dj-b5-visual"><img src="${artwork}" alt="Symbolbild für ${esc(categoryName(job.category_id))}" loading="eager">
-        <span class="dj-b5-symbol">Symbolbild</span><span class="dj-b5-category">${esc(categoryName(job.category_id))}</span></div>
-      <div class="dj-b5-main"><div class="dj-b5-heading"><div><span class="dj-b5-eyebrow">AKTUELLES STELLENANGEBOT</span>
-        <h2>${esc(job.title)}</h2></div><span class="dj-b5-type">${esc(workLabel(job.work_type))}</span></div>
-        <p class="dj-b5-city">⌖ ${esc(job.city||'Ort nicht angegeben')}${posted?' · '+esc(posted):''}</p>
-        <div class="dj54b-list-rating"><span>Arbeitgeberbewertung</span>${ratingView(job.__rating)}</div>
-        <div class="dj-b5-pay">${esc(pay)}</div>
-        <details class="dj-b5-details"><summary>Jobdetails anzeigen <span aria-hidden="true">⌄</span></summary>
-          <p>${esc(description)}</p><p class="dj-b5-info">Weitere Einzelheiten kannst du nach einem gegenseitigen Match im Chat klären.</p>
-        </details>
-        <div class="dj-b5-actions"><button type="button" class="dj-b5-pass" data-swipe="pass" aria-label="Job überspringen"><span aria-hidden="true">✕</span><small>Weiter</small></button>
-          <button type="button" class="dj-b5-like" data-swipe="like" aria-label="Job liken"><span aria-hidden="true">♥</span><small>Gefällt mir</small></button></div>
-      </div></article>`;
-  };
-  // PHASE_52B6_EMPLOYER_DISCOVERY: photo-first candidate card; only API-supplied data.
-  const candidateCard=p=>`<article class="dj-b6-card" aria-label="Kandidatenprofil ${esc(p.display_name||'')}">
-    <div class="dj-b6-photo">
-      <img src="${p.photo_url?esc(p.photo_url):art(workerArtwork(p.profession))}" alt="" loading="lazy">
-      <span class="dj-b6-art-label">${p.photo_url?'Profilfoto':'Symbolbild · Berufsbereich'}</span>
-      <span class="dj-b6-photo-job">${esc(p.profession||'Offen für Arbeit')}</span>
-    </div>
-    <div class="dj-b6-body">
-      <div class="dj-b6-kicker">KANDIDATENPROFIL</div>
-      <h2>${esc(p.display_name||'Unbenanntes Profil')}</h2>
-      <div class="dj54b-list-rating"><span>Bewertung dieser Person</span>${ratingView(p.__rating)}</div>
-      <div class="dj-b6-meta"><span>⌖ ${esc(p.city||'Ort nicht angegeben')}</span><span>◷ ${esc(p.availability||'Verfügbarkeit nicht angegeben')}</span></div>
-      <details class="dj-b6-details"><summary>Über diese Person <span aria-hidden="true">⌄</span></summary>
-        <p>${esc(p.bio||'Diese Person hat noch keine Beschreibung hinterlegt.')}</p>
-      </details>
-      <div class="dj-b6-actions"><button type="button" data-swipe="pass" class="dj-b6-pass" aria-label="Kandidat überspringen"><span>✕</span> Weiter</button>
-      <button type="button" data-swipe="like" class="dj-b6-like" aria-label="Kandidaten liken"><span>♥</span> Gefällt mir</button></div>
-    </div>
-  </article>`;
-  async function discoveryView(){if(!state.user)return navigate('login');await loadCategories();let content='';if(state.user.role==='worker'){
-    state.jobs=await api('/api/discovery/jobs'+(state.filterCity||state.filterCategory?'?'
-      +new URLSearchParams({...state.filterCity?{city:state.filterCity}:{},...state.filterCategory?{category_id:state.filterCategory}:{}}):''));
-      // PHASE_52B5_WORKER_DISCOVERY: server-filter city/category; client-filter job type over returned feed.
-      // Work-type filtering only applies to the first server-returned batch; not advertised as exhaustive.
-      const visibleJobs=state.filterWorkType
-        ?state.jobs.filter(j=>j.work_type===state.filterWorkType):state.jobs;
-      const job=visibleJobs[0];
-      if(job)job.__rating=await readRating(job.employer_id);
-      const filtered=Boolean(state.filterCity||state.filterCategory||state.filterWorkType);
-      const count=visibleJobs.length;
-      content=`<section class="dj-b5-intro"><div class="dj-b5-overline">DOPPLEJA · ENTDECKEN</div>
-          <h1>Finde deinen nächsten Job</h1><p>Ganz ohne Lebenslauf. Entdecke passende Stellen und zeig mit ♥ Interesse.</p>
-          <span class="dj-b5-count">${count} ${count===1?'Job':'Jobs'} in deiner Auswahl</span></section>
-        <section class="dj-b5-filter-panel" aria-label="Jobs filtern"><div class="dj-b5-filter-title"><strong>Deine Suche</strong>
-          <span>Stadt, Bereich &amp; Jobmodell</span></div>
-          <div class="dj-b5-fields"><label class="field">Stadt<input id="filter-city" placeholder="z. B. Berlin" value="${esc(state.filterCity)}"></label>
-          <label class="field">Bereich<select id="filter-category">${options([['','Alle Bereiche'],...state.categories.map(c=>[c.id,c.name])],state.filterCategory)}</select></label>
-          <label class="field dj-b5-worktype">Jobmodell<select id="filter-worktype">${options([['','Alle Jobmodelle'],['minijob','Minijob'],['part_time','Teilzeit'],['full_time','Vollzeit'],['temporary','Tagesjob / Kurzfristig']],state.filterWorkType)}</select></label></div>
-          <div class="dj-b5-filter-buttons"><button type="button" class="btn" id="filter-apply">Jobs anzeigen →</button>
-          <button type="button" class="dj-b5-reset" id="filter-reset">Zurücksetzen</button></div></section>
-        ${job?`<div class="dj-b5-stack-label"><strong>Für dich entdecken</strong><span>${count} in dieser Auswahl</span></div>${jobCard(job)}`:
-        `<section class="dj-b5-empty"><div class="dj-b5-empty-icon">${filtered?'⌕':'🤝'}</div>
-          <h2>${filtered?'Keine Jobs mit diesen Filtern':'Du bist auf dem neuesten Stand!'}</h2>
-          <p>${filtered?'Versuche andere Suchkriterien. Die Auswahl beim Jobmodell wird auf die aktuell geladenen Stellen angewendet.':'Du hast die derzeit verfügbaren Jobs für deinen Account angesehen. Neue Jobs können später hinzukommen.'}</p>
-          <div class="dj-b5-empty-links"><button type="button" data-go="likes">♥ Meine Likes</button>
-          <button type="button" data-go="chats">🤝 Chats öffnen</button></div></section>`}
-        <p class="dj-b5-note">Jobfotos sind Symbolbilder. Likes und Matches basieren auf echten Einträgen in deiner aktuellen Datenbank.</p>`;
+  // DISCOVER_V2_BEGIN: compact multi-card feed; all records come from existing APIs.
+  const djDiscoverMoney = job => job.hourly_pay_min == null && job.hourly_pay_max == null ? '' :
+    `${job.hourly_pay_min != null ? money(job.hourly_pay_min) : ''}${job.hourly_pay_max != null ? (job.hourly_pay_min != null ? '–' : '') + money(job.hourly_pay_max) : ''} / Std.`;
+  const djDiscoverJob = job => `<article class="djv2-card djv2-job" aria-label="Stellenangebot ${esc(job.title)}">
+    <div class="djv2-image"><img src="${art(jobArtwork[job.category_id]||'job-craft.webp')}" alt="Symbolbild ${esc(categoryName(job.category_id))}" loading="lazy"><span class="djv2-image-tag">Symbolbild</span></div>
+    <div class="djv2-card-body"><h2>${esc(job.title)}</h2><p class="djv2-quiet">${esc(categoryName(job.category_id))}</p>
+      <p class="djv2-fact">⌖ ${esc(job.city||'Ort offen')}</p><p class="djv2-fact">▣ ${esc(workLabel(job.work_type))}</p>
+      ${djDiscoverMoney(job)?`<p class="djv2-fact">€ ${esc(djDiscoverMoney(job))}</p>`:''}
+      <div class="djv2-tags"><span>${esc(categoryName(job.category_id))}</span><span>${esc(workLabel(job.work_type))}</span></div>
+      <details class="djv2-description"><summary>Stellendetails</summary><p>${esc(job.description||'Keine Beschreibung vorhanden.')}</p></details>
+      <div class="djv2-actions"><button type="button" class="djv2-skip" data-swipe="pass" data-discover-id="${esc(job.id)}">Überspringen</button>
+      <button type="button" class="djv2-like" data-swipe="like" data-discover-id="${esc(job.id)}" aria-label="${esc(job.title)} liken">♡ Interessant</button></div>
+    </div></article>`;
+  const djDiscoverCandidate = p => `<article class="djv2-card djv2-candidate" aria-label="Kandidat ${esc(p.display_name||'')}">
+    <div class="djv2-image"><img src="${p.photo_url?esc(p.photo_url):art(workerArtwork(p.profession))}" alt="${p.photo_url?'Profilfoto':'Symbolbild'}" loading="lazy"><span class="djv2-image-tag">${p.photo_url?'Profilfoto':'Symbolbild'}</span></div>
+    <div class="djv2-card-body"><h2>${esc(p.display_name||'Profil')}</h2><p class="djv2-quiet">${esc(p.profession||'Tätigkeit offen')}</p>
+      ${p.city?`<p class="djv2-fact">⌖ ${esc(p.city)}</p>`:''}${p.availability?`<p class="djv2-fact">◷ ${esc(p.availability)}</p>`:''}
+      <div class="djv2-tags">${p.profession?`<span>${esc(p.profession)}</span>`:''}</div>
+      <details class="djv2-description"><summary>Profil ansehen</summary><p>${esc(p.bio||'Noch keine Beschreibung vorhanden.')}</p></details>
+      <div class="djv2-actions"><button type="button" class="djv2-skip" data-swipe="pass" data-discover-id="${esc(p.user_id)}">Überspringen</button>
+      <button type="button" class="djv2-like" data-swipe="like" data-discover-id="${esc(p.user_id)}" aria-label="${esc(p.display_name||'Profil')} liken">♡ Interessant</button></div>
+    </div></article>`;
+  function djDiscoverChips(selected=''){
+    return `<div class="djv2-chips" aria-label="Bereich wählen"><button type="button" class="${!selected?'on':''}" data-discover-category="">Alle</button>${state.categories.map(c=>`<button type="button" class="${String(selected)===String(c.id)?'on':''}" data-discover-category="${esc(c.id)}">${esc(c.name)}</button>`).join('')}</div>`;
+  }
+  async function discoveryView(){
+    if(!state.user)return navigate('login');await loadCategories();const worker=state.user.role==='worker';
+    let items=[];
+    if(worker){
+      state.jobs=await api('/api/discovery/jobs'+(state.filterCity||state.filterCategory?'?'+new URLSearchParams({...(state.filterCity?{city:state.filterCity}:{}),...(state.filterCategory?{category_id:state.filterCategory}:{})}):''));
+      items=state.jobs.filter(j=>!state.filterWorkType||j.work_type===state.filterWorkType);
+    }else{
+      state.mine=(await api('/api/jobs/mine')).filter(j=>j.is_active&&!j.archived_at);
+      if(!state.selectedJob||!state.mine.some(j=>j.id===state.selectedJob))state.selectedJob=state.mine[0]?.id||null;
+      state.candidates=state.selectedJob?await api('/api/discovery/workers?job_id='+encodeURIComponent(state.selectedJob)):[];
+      items=state.candidates;
+    }
+    const heading=worker?'Entdecke Jobs':'Entdecke Talente';
+    const subtitle=worker?'Finde passende Stellen in deiner Nähe.':'Finde passende Mitarbeiter für dein Team.';
+    const controls=worker?`<div class="djv2-filter-row">
+       <label class="djv2-search"><span aria-hidden="true">⌕</span><input id="djv2-search" type="search" placeholder="Jobtitel, Stichwort oder Ort" aria-label="Jobs durchsuchen"></label>
+       <button type="button" class="djv2-filter-toggle" id="djv2-filter-toggle" aria-expanded="false" aria-controls="djv2-filter-panel">☷ <span class="sr-only">Filter</span></button></div>
+       ${djDiscoverChips(state.filterCategory)}
+       <section id="djv2-filter-panel" class="djv2-filters" hidden>
+         <label>Stadt<input id="filter-city" placeholder="z. B. Berlin" value="${esc(state.filterCity)}"></label>
+         <label>Jobmodell<select id="filter-worktype">${options([['','Alle Jobmodelle'],['minijob','Minijob'],['part_time','Teilzeit'],['full_time','Vollzeit'],['temporary','Tagesjob / Kurzfristig']],state.filterWorkType)}</select></label>
+         <button type="button" id="filter-apply">Filter anwenden</button><button type="button" id="filter-reset">Zurücksetzen</button></section>`:
+      `<div class="djv2-filter-row"><label class="djv2-search"><span aria-hidden="true">⌕</span><input id="djv2-search" type="search" placeholder="Beruf, Stichwort oder Ort" aria-label="Talente durchsuchen"></label></div>
+       ${state.mine.length?`<div class="djv2-job-picker">${select('Talente für diese Stelle','job-picker',state.mine.map(j=>[j.id,j.title+' · '+j.city]),state.selectedJob)}</div>`:`<div class="djv2-nojob">Erstelle zuerst eine aktive Stelle. <button type="button" data-go="job-create">Stelle erstellen</button></div>`}`;
+    const cards=items.map(i=>worker?djDiscoverJob(i):djDiscoverCandidate(i)).join('');
+    const content=`<div class="djv2-discover" data-discover-role="${worker?'worker':'employer'}">
+       <header class="djv2-top"><img src="/app-assets/assets/brand/doppleja-logo.svg" alt="DoppleJa"><button type="button" data-go="settings" aria-label="Einstellungen">⚙</button></header>
+       <h1>${heading}</h1><p class="djv2-subtitle">${subtitle}</p>${controls}
+       <div class="djv2-feed" id="djv2-feed">${cards||`<section class="djv2-empty"><div class="djv2-empty-symbol">♡</div><h2>Im Moment keine neuen ${worker?'Jobs':'Profile'}</h2><p>${worker?'Versuche andere Filter oder schau später wieder vorbei.':state.mine.length?'Für diese Stelle sind derzeit keine weiteren Profile verfügbar.':'Veröffentliche eine Stelle, um Talente zu entdecken.'}</p></section>`}</div>
+       <p class="djv2-data-note">${worker?'Berufsbilder sind illustrative Symbolbilder.':'Ohne eigenes Profilfoto zeigen wir ein Symbolbild.'} Es werden nur tatsächlich verfügbare Einträge angezeigt. ${worker&&state.filterWorkType?'Der Jobmodellfilter gilt für die aktuell geladenen Ergebnisse.':''}</p>
+       </div>`;
+    render(shell(content,'discover'));
+    const rootFeed=root.querySelector('#djv2-feed');
+    const search=root.querySelector('#djv2-search');
+    if(search&&rootFeed)search.addEventListener('input',()=>{
+      const q=search.value.trim().toLocaleLowerCase('de');let shown=0;
+      rootFeed.querySelectorAll('.djv2-card').forEach((card,i)=>{
+        const item=items[i];const searchable=worker?[item.title,item.city,categoryName(item.category_id),item.description]:[item.display_name,item.profession,item.city,item.bio];
+        const visible=!q||searchable.some(value=>String(value||'').toLocaleLowerCase('de').includes(q));card.hidden=!visible;if(visible)shown++;
+      });
+      let empty=rootFeed.querySelector('.djv2-search-empty');
+      if(!shown&&items.length){if(!empty){empty=document.createElement('p');empty.className='djv2-search-empty';rootFeed.appendChild(empty);}empty.textContent='Keine Treffer für diese Suche.';}
+      else if(empty)empty.remove();
+    });
+  }
+  async function swipe(action,recordId){
+    if(state.busy)return;
+    const worker=state.user.role==='worker';
+    const job_id=worker?(recordId||state.jobs[0]?.id):state.selectedJob;
+    const worker_id=worker?null:(recordId||state.candidates[0]?.user_id);
+    if(!job_id||(!worker&& !worker_id))return;
+    state.busy=true;
+    try{const response=await api('/api/swipes',{method:'POST',body:JSON.stringify({job_id,action,...worker_id?{worker_id}:{}})});
+      if(!response.is_match)toast(action==='like'?'♥ Interesse gespeichert':'Übersprungen');
+      await discoveryView();if(response.is_match)showMatchCelebration();
+    }catch(e){toast(e.message);}finally{state.busy=false;}
+  }
+  // DISCOVER_V2_END
 
-  }else{
-    // PHASE_52B6_EMPLOYER_FEED: preserve job picker and real discovery/swipe APIs.
-    state.mine=(await api('/api/jobs/mine')).filter(j=>j.is_active&&!j.archived_at);
-    if(!state.selectedJob||!state.mine.some(j=>j.id===state.selectedJob))state.selectedJob=state.mine[0]?.id||null;
-    if(state.selectedJob)state.candidates=await api('/api/discovery/workers?job_id='+encodeURIComponent(state.selectedJob));
-    else state.candidates=[];
-    if(state.candidates.length)state.candidates[0].__rating=await readRating(state.candidates[0].user_id);
-    const employerName=state.profile?.display_name||'Dein Unternehmen';
-    const selected=state.mine.find(j=>j.id===state.selectedJob);
-    content=`<section class="dj-b6-intro"><div class="dj-b6-overline">DOPPLEJA · PERSONAL FINDEN</div>
-      <h1>Menschen entdecken</h1><p>Hallo, ${esc(employerName)}! Finde passende Menschen für deine offenen Stellen – ohne klassische Bewerbung.</p>
-      <div class="dj-b6-stats"><span><strong>${state.mine.length}</strong> aktive Jobs</span><span><strong>${state.candidates.length}</strong> neue Profile</span></div></section>
-      <section class="dj-b6-controls" aria-label="Stelle auswählen"><div class="dj-b6-heading"><strong>Für welchen Job suchst du?</strong><button type="button" data-go="my-jobs">Meine Jobs →</button></div>
-      ${state.mine.length?`${select('Stelle auswählen','job-picker',state.mine.map(j=>[j.id,j.title+' · '+j.city]),state.selectedJob)}
-        <div class="dj-b6-selected">${esc(selected?.title||'')} · ${esc(selected?.city||'')}</div>`:
-        `<div class="dj-b6-nojob"><p>Du brauchst zuerst eine aktive Stellenanzeige, um Kandidatinnen und Kandidaten zu entdecken.</p>
-        <button type="button" class="btn" data-go="job-create">+ Job erstellen</button></div>`}</section>
-      ${state.candidates.length?`<div class="dj-b6-sectionlabel"><strong>Für diese Stelle entdecken</strong><span>${state.candidates.length} ${state.candidates.length===1?'Profil':'Profile'} verfügbar</span></div>
-        ${candidateCard(state.candidates[0])}`:state.mine.length?`<section class="dj-b6-empty"><div class="dj-b6-empty-icon">🤝</div>
-        <h2>Alle aktuellen Profile angesehen</h2><p>Für diese Stelle sind gerade keine weiteren Profile verfügbar. Wähle eine andere Stelle oder komm später wieder.</p>
-        <div class="dj-b6-empty-actions"><button type="button" data-go="my-jobs">Meine Jobs</button><button type="button" data-go="chats">🤝 Chats</button></div></section>`:''}
-      <p class="dj-b6-note">Ohne hochgeladenes Profilfoto zeigen wir ein gekennzeichnetes Symbolbild. Es gibt keine erfundenen Bewertungen oder Match-Prozente.</p>`;
-  }render(shell(content,'discover'));}
-  async function swipe(action){if(state.busy)return;let job_id,worker_id;if(state.user.role==='worker'){job_id=state.jobs[0]?.id;}
-  else{job_id=state.selectedJob;worker_id=state.candidates[0]?.user_id;}if(!job_id)return;state.busy=true;
-  try{const response=await api('/api/swipes',{method:'POST',body:JSON.stringify({job_id,action,...worker_id?{worker_id}:{}})});
-  if(!response.is_match)toast(action==='like'?'♥ Gefällt dir!':'Weiter geht’s');
-  await discoveryView();if(response.is_match)showMatchCelebration();}catch(e){toast(e.message);}finally{state.busy=false;}}
   function showMatchCelebration(){
     const old=document.querySelector('.dj2-celebration');if(old)old.remove();
     const overlay=document.createElement('div');overlay.className='dj2-celebration';
@@ -360,16 +376,69 @@
       <button type="button" class="dj2-match-open" data-open-match="${esc(m.match_id)}" aria-label="Chat mit ${esc(m.other_party_name)} öffnen">Chat öffnen <span aria-hidden="true">→</span></button>
     </article>`;
   };
+  // MATCHES_V3_BEGIN: shared Matches page, role-specific tabs and real records only.
+  let djMatchTab = 'matches';
+  const djMatchLogo = `<header class="dj-mv-head"><img src="/app-assets/assets/brand/doppleja-logo.svg" alt="DoppleJa"><button type="button" data-go="settings" aria-label="Einstellungen" class="dj-mv-settings">⚙</button></header>`;
+  const djMatchTabs = role => role === 'employer' ? [['matches','Matches'],['likes','Likes'],['jobs','Meine Jobs']] : [['matches','Matches'],['likes','Meine Likes']];
+  const djMatchRow = m => `<article class="dj-mv-card">
+      <div class="dj-mv-card-top"><span class="dj-mv-avatar" aria-hidden="true">${esc((m.other_party_name||'?').trim().charAt(0).toUpperCase())}</span>
+      <div class="dj-mv-card-body"><strong>${esc(m.other_party_name)}</strong><span>${esc(m.job_title)} · ${esc(m.city||'')}</span>
+      <small>${m.has_messages?'Unterhaltung läuft':'Neues gegenseitiges Match'} · ${fullDate(m.matched_at)}</small></div>
+      <span class="dj-mv-pill dj-mv-pill-match">Match</span></div>
+      <div class="dj-mv-card-actions"><button type="button" data-open-match="${esc(m.match_id)}" class="dj-mv-primary">Nachricht schreiben →</button></div>
+    </article>`;
+  const djWorkerLikeRow = j => `<article class="dj-mv-card"><div class="dj-mv-card-top">
+    <div class="dj-mv-avatar dj-mv-job-icon" aria-hidden="true">▣</div>
+    <div class="dj-mv-card-body"><strong>${esc(j.title)}</strong><span>${esc(j.city)} · ${esc(j.category)}</span>
+    <small>${esc(workLabel(j.work_type))}${j.hourly_pay_min!=null?' · ab '+money(j.hourly_pay_min)+'/Std.':''}</small></div>
+    <span class="dj-mv-pill ${j.status==='matched'?'dj-mv-pill-match':j.status==='unavailable'?'dj-mv-pill-muted':'dj-mv-pill-wait'}">${j.status==='matched'?'Match':j.status==='unavailable'?'Nicht verfügbar':'Wartet'}</span></div>
+    ${j.match_id?`<div class="dj-mv-card-actions"><button class="dj-mv-primary" data-open-match="${esc(j.match_id)}">Nachricht schreiben →</button></div>`:''}
+    </article>`;
+  const djEmployerLikeRow = j => `<article class="dj-mv-card"><div class="dj-mv-card-top">
+    <span class="dj-mv-avatar" aria-hidden="true">${esc((j.worker_name||'?').trim().charAt(0).toUpperCase())}</span>
+    <div class="dj-mv-card-body"><strong>${esc(j.worker_name)}</strong><span>${esc(j.profession||'Jobsuchend')} · ${esc(j.city||'')}</span>
+    <small>Für: ${esc(j.job_title)}</small></div><span class="dj-mv-pill ${j.status==='matched'?'dj-mv-pill-match':'dj-mv-pill-wait'}">${j.status==='matched'?'Match':'Wartet'}</span>
+    </div>${j.match_id?`<div class="dj-mv-card-actions"><button class="dj-mv-primary" data-open-match="${esc(j.match_id)}">Nachricht schreiben →</button></div>`:''}</article>`;
+  const djEmployerJobRow = j => `<article class="dj-mv-card"><div class="dj-mv-card-top"><span class="dj-mv-avatar dj-mv-job-icon" aria-hidden="true">▣</span>
+     <div class="dj-mv-card-body"><strong>${esc(j.title)}</strong><span>${esc(j.city)} · ${esc(workLabel(j.work_type))}</span>
+     <small>${j.hourly_pay_min!=null?'Ab '+money(j.hourly_pay_min)+'/Std.':'Vergütung nicht angegeben'}</small></div>
+     <span class="dj-mv-pill ${j.archived_at?'dj-mv-pill-muted':j.is_active?'dj-mv-pill-match':'dj-mv-pill-wait'}">${esc(jobStatus(j))}</span></div>
+     ${j.archived_at?'<p class="dj-mv-muted">Archiviert · Nur noch zur Ansicht</p>':`<div class="dj-mv-card-actions dj-mv-job-actions">
+       <button type="button" data-edit-job="${esc(j.id)}">Bearbeiten</button>
+       <button type="button" data-job-action="${j.is_active?'pause':'reactivate'}" data-job-id="${esc(j.id)}">${j.is_active?'Pausieren':'Reaktivieren'}</button>
+       <button type="button" class="dj-mv-danger" data-job-action="archive" data-job-id="${esc(j.id)}">Archivieren</button>
+     </div>`}</article>`;
   async function matchesView(){
     if(!state.user)return navigate('login');
-    state.matches=await api('/api/match-summaries');
-    state.matches.sort((a,b)=>new Date(b.last_message?.created_at||b.matched_at)-new Date(a.last_message?.created_at||a.matched_at));
-    render(shell(`<div class="dj2-page-label">VERBINDUNGEN</div><h1 class="title">Deine Matches 🤝</h1>
-      <p class="subtitle">Hier beginnt euer Gespräch – ganz ohne Bewerbung.</p>
-      <div class="dj2-match-list">${state.matches.length?state.matches.map(matchCard).join(''):
-        `<section class="dj2-blank"><div class="dj2-blank-icon">🤝</div><h2>Noch kein Match</h2>
-        <p>Wenn ihr beide auf ♥ tippt, findet ihr euch hier wieder.</p><button class="btn" data-go="discover">Menschen entdecken →</button></section>`}</div>`,'matches'));
+    const role=state.user.role;
+    const tabs=djMatchTabs(role);
+    if(!tabs.some(([id])=>id===djMatchTab))djMatchTab='matches';
+    let rows=[],summary='',action='';
+    if(djMatchTab==='matches'){
+      state.matches=await api('/api/match-summaries');
+      state.matches.sort((a,b)=>new Date(b.last_message?.created_at||b.matched_at)-new Date(a.last_message?.created_at||a.matched_at));
+      rows=state.matches.map(djMatchRow);
+      summary=state.matches.length+' gegenseitige Matches';
+      action=`<div class="dj-mv-empty"><span aria-hidden="true">♡</span><h2>Noch kein Match</h2><p>Wenn beide Seiten auf Interessant tippen, erscheint das Match hier.</p><button type="button" data-go="discover">Jetzt entdecken →</button></div>`;
+    }else if(djMatchTab==='likes'&&role==='worker'){
+      const items=await api('/api/workers/me/likes');rows=items.map(djWorkerLikeRow);summary=items.length+' Likes';
+      action=`<div class="dj-mv-empty"><span aria-hidden="true">♡</span><h2>Noch keine Likes</h2><p>Deine interessanten Stellen erscheinen hier.</p><button data-go="discover">Jobs entdecken →</button></div>`;
+    }else if(djMatchTab==='likes'){
+      const items=await api('/api/employers/me/likes');rows=items.map(djEmployerLikeRow);summary=items.length+' Likes';
+      action=`<div class="dj-mv-empty"><span aria-hidden="true">♡</span><h2>Noch keine Likes</h2><p>Deine interessanten Kandidaten erscheinen hier.</p><button data-go="discover">Talente entdecken →</button></div>`;
+    }else if(djMatchTab==='jobs'&&role==='employer'){
+      state.mine=await api('/api/jobs/mine');rows=state.mine.map(djEmployerJobRow);summary=state.mine.length+' Stellenanzeigen';
+      action=`<div class="dj-mv-empty"><span aria-hidden="true">▣</span><h2>Noch keine Stellen</h2><p>Erstelle deine erste Stellenanzeige.</p><button type="button" data-new-job>Job erstellen →</button></div>`;
+    }
+    const tabHtml=tabs.map(([id,label])=>`<button type="button" data-dj-match-tab="${id}" role="tab" aria-selected="${djMatchTab===id}" class="${djMatchTab===id?'active':''}">${label}</button>`).join('');
+    render(shell(`<div class="dj-matches-v3">${djMatchLogo}
+      <h1>Deine Matches</h1><p class="dj-mv-subtitle">${role==='worker'?'Passende Stellen und deine Verbindungen.':'Kandidaten, Likes und Stellen im Überblick.'}</p>
+      <div class="dj-mv-tabs" role="tablist" aria-label="Matches verwalten">${tabHtml}</div>
+      <div class="dj-mv-list-top"><strong>${esc(summary)}</strong>${role==='employer'&&djMatchTab==='jobs'?'<button type="button" data-new-job>+ Job</button>':''}</div>
+      <div class="dj-mv-list">${rows.length?rows.join(''):action}</div>
+      </div>`,'matches'));
   }
+  // MATCHES_V3_END
   async function chatsView(){
     if(!state.user)return navigate('login');
     state.chats=await api('/api/match-summaries');
@@ -479,17 +548,23 @@
       action==='pause'?'Job pausieren?':'Job wieder aktivieren?';
       if(!window.confirm(ask))return;await api('/api/jobs/'+encodeURIComponent(status.dataset.jobId)+
       '/status',{method:'PATCH',body:JSON.stringify({action})});toast(action==='archive'?
-        'Job archiviert':action==='pause'?'Job pausiert':'Job reaktiviert');return myJobsView();}
+        'Job archiviert':action==='pause'?'Job pausiert':'Job reaktiviert');djMatchTab='jobs';return matchesView();}
     if(event.target.closest('[data-dj54-confirm]')){await api(`/api/matches/${encodeURIComponent(state.currentMatch)}/confirm-completion`,{method:'POST'});await loadCompletionPanel(state.currentMatch);return;}
+    const roleChoice=event.target.closest('[data-register-role]');if(roleChoice){state.registrationRole=roleChoice.dataset.registerRole;return navigate('register-details');}
+    const mvTab=event.target.closest('[data-dj-match-tab]');if(mvTab){djMatchTab=mvTab.dataset.djMatchTab;return matchesView();}
     const go=event.target.closest('[data-go]');if(go)return navigate(go.dataset.go);
-    const s=event.target.closest('[data-swipe]');if(s)return swipe(s.dataset.swipe);
+    const cat=event.target.closest('[data-discover-category]');
+    if(cat){state.filterCategory=cat.dataset.discoverCategory;return discoveryView();}
+    const toggle=event.target.closest('#djv2-filter-toggle');
+    if(toggle){const panel=root.querySelector('#djv2-filter-panel');if(panel){panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));}return;}
+    const s=event.target.closest('[data-swipe]');if(s)return swipe(s.dataset.swipe,s.dataset.discoverId);
     const m=event.target.closest('[data-open-match]');
     if(m){state.currentMatch=m.dataset.openMatch;return navigate('conversation');}
     if(event.target.closest('#filter-reset')){state.filterCity='';state.filterCategory='';state.filterWorkType='';return discoveryView();}
     if(event.target.closest('#filter-apply')){state.filterCity=$('#filter-city').value.trim();
-      state.filterCategory=$('#filter-category').value;state.filterWorkType=$('#filter-worktype').value;return discoveryView();}if(event.target.closest('#logout'))
+      state.filterWorkType=$('#filter-worktype').value;return discoveryView();}if(event.target.closest('#logout'))
         {await api('/api/auth/logout',{method:'POST'});closeChat();state.user=null;state.profile=null;state.categories=[];
-      toast('Abgemeldet');return navigate('home');}}));
+      toast('Abgemeldet');return navigate('login');}}));
   root.addEventListener('change',event=>run(async()=>{if(event.target.name==='job-picker'){state.selectedJob=event.target.value;await discoveryView();}}));
   root.addEventListener('submit',event=>{event.preventDefault();run(async()=>{const form=event.target;const v=values(form);
     const btn=form.querySelector('[type=submit]');if(btn)btn.disabled=true;try{

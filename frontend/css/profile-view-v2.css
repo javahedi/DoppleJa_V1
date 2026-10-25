@@ -1,0 +1,31 @@
+/* DoppleJa Profile View V2 — styles isolated to saved profile view */
+.dj-pv2-screen{background:#fff!important;padding:0 0 34px!important;color:#21144e}
+.dj-pv2-view{padding:16px 14px 28px;max-width:900px;margin:auto}
+.dj-pv2-mast{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;margin-bottom:14px;gap:8px}
+.dj-pv2-logo{display:block;width:min(230px,75%);height:auto;max-height:65px;justify-self:center;object-fit:contain}
+.dj-pv2-back,.dj-pv2-edit-top{border:0;background:transparent;color:#28145d;cursor:pointer;font-size:34px;line-height:1;min-height:42px}
+.dj-pv2-edit-top{font-size:23px}
+.dj-pv2-hero{position:relative;height:240px;overflow:hidden;border-radius:17px;background:#f3efff}
+.dj-pv2-hero>img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 30%}
+.dj-pv2-topbadges{position:absolute;top:12px;left:12px;display:flex;gap:8px}
+.dj-pv2-topbadges span{background:#fffef4e8;border-radius:30px;padding:7px 12px;font-size:12px;font-weight:700;color:#42266e}
+.dj-pv2-edit{position:absolute;bottom:12px;right:12px;padding:10px 13px;border-radius:12px;border:1px solid #ece3ff;background:#fffffff2;color:#621ce4;font-weight:750;cursor:pointer;font-size:13px}
+.dj-pv2-summary{padding:16px 6px 12px}
+.dj-pv2-headline h1{font-size:clamp(25px,6vw,35px);line-height:1.15;color:#25125b;letter-spacing:-.035em;margin:0 0 4px}
+.dj-pv2-role{font-size:16px;color:#7b739e;font-weight:650;margin:0 0 8px}
+.dj-pv2-location{color:#7b739e;font-size:14px;margin:0 0 8px}
+.dj-pv2-rating{font-size:14px;font-weight:700;color:#6c2ade}
+.dj-pv2-bio{font-size:14px;line-height:1.55;color:#70698e;margin:12px 0 0;overflow-wrap:anywhere}
+.dj-pv2-details,.dj-pv2-reviews{margin:8px 0 18px;padding:16px;border:1px solid #ece7ff;border-radius:17px;background:#fff}
+.dj-pv2-details h2,.dj-pv2-reviews h2,.dj-pv2-editor h2{font-size:17px;margin:0 0 13px;color:#241355}
+.dj-pv2-details .dj-detail-grid{margin:0;gap:10px}
+.dj-pv2-details .dj-detail-grid>div{background:#faf8ff;border:1px solid #eee8ff;border-radius:12px;padding:12px;min-width:0;overflow-wrap:anywhere}
+.dj-pv2-reviews .dj54b-profile-panel{padding:0;border:0;box-shadow:none;background:transparent;margin:0}
+.dj-pv2-reviews .dj54b-profile-heading{display:none}
+.dj-pv2-editor{padding:16px;border:1px solid #dacaff;border-radius:18px;background:#fdfaff;margin:12px 0 30px}
+.dj-pv2-editor[hidden]{display:none!important}
+.dj-pv2-editor .dj-glass-panel{border:0;box-shadow:none;margin:0;padding:0;background:transparent}
+.dj-pv2-nav{background:#fff!important;border-top:1px solid #eae4fc!important}
+.dj-pv2-nav button.active{color:#621fe0!important}
+@media (max-width:355px){.dj-pv2-view{padding:12px 10px 22px}.dj-pv2-hero{height:195px}.dj-pv2-logo{max-width:205px}.dj-pv2-details,.dj-pv2-reviews{padding:12px}}
+@media (min-width:600px){.dj-pv2-view{padding:24px 28px 32px}.dj-pv2-hero{height:330px}.dj-pv2-details,.dj-pv2-reviews{padding:20px}}

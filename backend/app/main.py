@@ -1,3 +1,4 @@
+from backend.app.modules.likes.employer_likes_v3 import router as employer_likes_v3_router
 from backend.app.core.auth_protection import AuthProtectionMiddleware
 from backend.app.modules.frontend.router import router as frontend_router, assets as frontend_assets
 from fastapi import FastAPI
@@ -23,6 +24,7 @@ app.include_router(auth_router)
 app.include_router(completion_router)
 app.include_router(match_summaries_router)
 app.include_router(likes_router)
+app.include_router(employer_likes_v3_router)
 app.include_router(workers_router)
 app.include_router(employers_router)
 app.include_router(jobs_router)

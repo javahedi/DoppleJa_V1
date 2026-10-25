@@ -1,0 +1,18 @@
+/* DoppleJa Match Celebration V1 — only active on the existing mutual-match modal. */
+.dj2-celebration.dj-party-v1 .dj2-celebration-panel{
+ position:relative;isolation:isolate;overflow:hidden;
+ border:1px solid rgba(255,255,255,.24);
+ box-shadow:0 28px 70px rgba(24,6,72,.5),0 0 0 7px rgba(255,255,255,.045);
+ animation:djPartyEnter .45s cubic-bezier(.2,.85,.25,1) both;
+}
+.dj-party-v1 .dj2-celebration-icon{position:relative;z-index:1;display:inline-block;animation:djPartyBounce .85s cubic-bezier(.2,1.4,.3,1) .1s both}
+.dj-party-v1 .dj2-celebration-panel h2,.dj-party-v1 .dj2-celebration-panel p,.dj-party-v1 .dj2-celebration-panel button{position:relative;z-index:2}
+.dj-party-v1 .dj2-celebration-panel h2{color:#ffd23b;text-shadow:0 2px 16px #ffb62f33}
+.dj-party-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;border-radius:inherit}
+.dj-party-piece{position:absolute;left:var(--x);top:-12%;width:var(--w);height:var(--h);border-radius:2px;background:var(--c);opacity:0;transform:rotate(var(--r));animation:djConfettiFall var(--dur) ease-in var(--delay) both}
+.dj-party-piece:nth-child(4n){border-radius:50%}
+.dj-party-v1 .dj2-celebration-close:focus-visible,.dj-party-v1 .dj2-celebration-chats:focus-visible{outline:3px solid #ffd23b;outline-offset:3px}
+@keyframes djPartyEnter{from{opacity:0;transform:translateY(18px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes djPartyBounce{0%{transform:scale(.5) rotate(-12deg)}58%{transform:scale(1.16) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes djConfettiFall{0%{opacity:0;transform:translate3d(0,-10px,0) rotate(var(--r))}14%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translate3d(var(--drift),380px,0) rotate(calc(var(--r) + 540deg))}}
+@media(prefers-reduced-motion:reduce){.dj-party-v1 .dj2-celebration-panel,.dj-party-v1 .dj2-celebration-icon,.dj-party-v1 .dj-party-piece{animation:none!important}.dj-party-v1 .dj-party-piece{display:none}}

@@ -1,0 +1,39 @@
+/* DoppleJa Chats V2 – scoped to chat list and conversation only */
+.dj-chat-v2-brand{width:min(210px,65%);height:45px;object-fit:contain;object-position:left center;display:block}
+.dj-chats-v2,.dj-conversation-v2{background:linear-gradient(180deg,#fff 0%,#fff 66%,#fff8e5 100%);color:#241052}
+.dj-chats-v2 > .header,.dj-conversation-v2 > .header{padding-bottom:15px}
+.dj-chats-v2 .dj2-page-label{font-size:10px;color:#6425dc;letter-spacing:.12em}
+.dj-chats-v2 h1.title{font-size:clamp(26px,5vw,32px);margin-bottom:5px}
+.dj-chats-v2 .subtitle{color:#80799c}
+.dj-chat-v2-list-tools{display:flex;align-items:center;gap:10px;margin:18px 0 15px}
+.dj-chat-v2-list-tools input{min-width:0;flex:1;width:100%;height:48px;padding:0 15px;border:1px solid #e2d9fa;border-radius:15px;background:#fff;color:#241052;font-size:14px;outline:none}
+.dj-chat-v2-list-tools input:focus{border-color:#6525df;box-shadow:0 0 0 3px #6525df1a}
+.dj-chat-v2-total{white-space:nowrap;color:#7d739d;font-size:12px;font-weight:700}
+.dj-chats-v2 .dj2-match-list{gap:11px}
+.dj-chats-v2 .dj2-match{border:1px solid #e9e2f7;border-radius:19px;padding:14px;grid-template-columns:49px minmax(0,1fr);background:#fff;box-shadow:0 4px 18px #28125a0c}
+.dj-chats-v2 .dj2-match-icon{background:linear-gradient(145deg,#eadfff,#f8f5ff);color:#5920ca;width:49px;height:49px;border-radius:16px;box-shadow:none;font-weight:800;font-size:19px}
+.dj-chats-v2 .dj2-match-person{font-size:16px}
+.dj-chats-v2 .dj2-match-preview{margin:0;color:#827b99}
+.dj-chats-v2 .dj2-match-meta{gap:8px}
+.dj-chats-v2 .dj2-match-open{background:#6422df;border-radius:12px;min-height:43px}
+.dj-chats-v2 .dj2-match[hidden]{display:none}
+.dj-conversation-v2 .dj2-conversation{min-height:min(75dvh,800px);gap:12px}
+.dj-conversation-v2 .dj2-chat-header{gap:11px;padding:7px 0 15px;border-bottom:1px solid #ede7f6}
+.dj-conversation-v2 .dj2-chat-header .back{border:0;border-radius:12px;background:#f5f0ff;color:#40108a;width:38px;height:38px;display:grid;place-items:center;padding:0;font-size:23px}
+.dj-conversation-v2 .dj2-chat-avatar{height:47px;width:47px;min-width:47px;background:linear-gradient(145deg,#eadfff,#f8f5ff);font-size:18px;font-weight:800;color:#5822c9}
+.dj-conversation-v2 .dj2-chat-identity strong{font-size:16px}
+.dj-conversation-v2 .dj2-chat-status{font-weight:650}
+.dj-chat-v2-details{background:#fff;border:1px solid #e5dafa;border-radius:15px;overflow:hidden;flex-shrink:0}
+.dj-chat-v2-details > summary{padding:13px 15px;cursor:pointer;color:#321265;font-size:13px;font-weight:800;list-style-position:inside}
+.dj-chat-v2-details[open] > summary{border-bottom:1px solid #eee8f7}
+.dj-conversation-v2 .dj54-review-panel{margin:0!important;padding:13px!important;border:0!important;background:#fff!important;border-radius:0!important;box-shadow:none!important}
+.dj-conversation-v2 .dj2-chat-tip{border-radius:12px;background:#f4efff;color:#716287;padding:9px 12px}
+.dj-conversation-v2 .dj2-messages{padding:12px 3px 18px;max-height:58dvh;min-height:180px}
+.dj-conversation-v2 .dj2-messages .bubble{border-radius:17px 17px 17px 5px;line-height:1.5;max-width:87%;overflow-wrap:anywhere;box-shadow:0 3px 10px #26134c0b}
+.dj-conversation-v2 .dj2-messages .bubble.mine{border-radius:17px 17px 5px 17px;background:linear-gradient(120deg,#743bfa,#5b1bce);color:#fff;margin-left:auto}
+.dj-conversation-v2 .dj2-messages .bubble time{font-size:10px;opacity:.75}
+.dj-conversation-v2 .dj2-compose{display:flex;align-items:center;gap:8px;padding:12px 0 14px;margin-top:auto}
+.dj-conversation-v2 .dj2-compose input{flex:1;min-width:0;border-radius:24px;min-height:49px;padding:12px 17px;background:#fff;border:1px solid #ded6ef;box-shadow:none}
+.dj-conversation-v2 .dj2-compose button[type=submit]{width:49px;height:49px;min-width:49px;border-radius:50%;border:0;background:#6422df;color:#fff;font-size:19px;display:grid;place-items:center;padding:0;cursor:pointer}
+@media(max-width:370px){.dj-chats-v2 .dj2-match{padding:11px;grid-template-columns:43px minmax(0,1fr)}.dj-chats-v2 .dj2-match-icon{width:43px;height:43px}.dj-chat-v2-total{font-size:11px}.dj-chat-v2-list-tools{gap:6px}}
+@media(prefers-reduced-motion:no-preference){.dj-chats-v2 .dj2-match,.dj-conversation-v2 .dj2-compose button{transition:transform .18s ease,box-shadow .18s ease}.dj-chats-v2 .dj2-match:hover{transform:translateY(-2px);box-shadow:0 8px 21px #28125a15}}

@@ -1,0 +1,167 @@
+/* DoppleJa Design System V2 — targeted repair for V1 regressions.
+   Loaded after all existing styles. Does not modify navigation functionality. */
+:root { --dj2-violet:#6425df; --dj2-ink:#351071; }
+
+/* Header layout must not constrain intrinsic image sizing in a grid cell. */
+#app .djv2-discover .djv2-top,
+#app .dj-matches-v3 .dj-mv-head,
+#app .dj-chat3-list > .header,
+#app .dj-pv2-view .dj-pv2-mast {
+  position:relative!important;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  width:100%!important;
+  height:64px!important;
+  min-height:64px!important;
+  padding:0!important;
+  margin:0 0 20px!important;
+  border:0!important;
+  background:transparent!important;
+  gap:0!important;
+}
+#app .djv2-discover .djv2-top > img,
+#app .dj-matches-v3 .dj-mv-head > img,
+#app .dj-chat3-list > .header > img.dj-chat3-brand,
+#app .dj-pv2-view .dj-pv2-mast > img.dj-pv2-logo {
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  transform:translate(-50%,-50%)!important;
+  display:block!important;
+  flex:none!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  width:180px!important;
+  min-width:180px!important;
+  max-width:180px!important;
+  height:48px!important;
+  min-height:0!important;
+  max-height:48px!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  margin:0!important;
+  padding:0!important;
+}
+#app .djv2-discover .djv2-top > button,
+#app .dj-matches-v3 .dj-mv-head > button,
+#app .dj-chat3-list > .header > button,
+#app .dj-pv2-view .dj-pv2-mast > .dj-pv2-edit-top {
+  position:absolute!important;
+  right:0!important;
+  top:12px!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  flex:none!important;
+  width:40px!important;
+  min-width:40px!important;
+  height:40px!important;
+  min-height:40px!important;
+  border:0!important;
+  border-radius:12px!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  background:#f4efff!important;
+  color:#4b1aab!important;
+}
+#app .dj-pv2-view .dj-pv2-mast > .dj-pv2-back {
+  position:absolute!important;
+  left:0!important;
+  right:auto!important;
+  top:12px!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+  width:40px!important;
+  height:40px!important;
+  display:grid!important;
+  place-items:center!important;
+}
+
+/* V1 regression: styles.css has `.bottom-nav button span {font-size:21px}`.
+   Explicitly reset the label and icon sizes with greater specificity. */
+#app .bottom-nav,
+.app-shell .bottom-nav {
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:stretch!important;
+  width:min(465px,100%)!important;
+  max-width:100%!important;
+  min-height:72px!important;
+  padding:7px 5px calc(7px + env(safe-area-inset-bottom))!important;
+  gap:0!important;
+  box-sizing:border-box!important;
+  background:#fff!important;
+  border-top:1px solid #eee9f8!important;
+}
+#app .bottom-nav button[data-go],
+.app-shell .bottom-nav button[data-go] {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  min-width:0!important;
+  width:100%!important;
+  height:auto!important;
+  margin:0!important;
+  padding:4px 0!important;
+  font-size:10px!important;
+  font-weight:500!important;
+  line-height:1.25!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  color:#777493!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#app .bottom-nav button[data-go].active,
+.app-shell .bottom-nav button[data-go].active {color:var(--dj2-violet)!important;font-weight:750!important;}
+#app .bottom-nav button[data-go] > span.dj-nav-label,
+.app-shell .bottom-nav button[data-go] > span.dj-nav-label {
+  display:block!important;
+  font-family:inherit!important;
+  font-size:10px!important;
+  line-height:1.25!important;
+  font-weight:inherit!important;
+  max-width:100%!important;
+  letter-spacing:0!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  margin:0!important;
+  padding:0!important;
+}
+#app .bottom-nav button[data-go] > span.dj-nav-icon,
+.app-shell .bottom-nav button[data-go] > span.dj-nav-icon {
+  width:25px!important;
+  height:25px!important;
+  flex:0 0 25px!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0!important;
+  padding:0!important;
+  line-height:1!important;
+  font-size:0!important;
+}
+#app .bottom-nav button[data-go] > .dj-nav-icon > svg,
+.app-shell .bottom-nav button[data-go] > .dj-nav-icon > svg {
+  display:block!important;
+  width:23px!important;
+  height:23px!important;
+  fill:none!important;
+  stroke:currentColor!important;
+  stroke-width:1.9!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+@media(max-width:355px){
+  #app .bottom-nav button[data-go] > span.dj-nav-label,
+  .app-shell .bottom-nav button[data-go] > span.dj-nav-label {font-size:9px!important;}
+  #app .djv2-discover .djv2-top > img,
+  #app .dj-matches-v3 .dj-mv-head > img,
+  #app .dj-chat3-list > .header > img.dj-chat3-brand,
+  #app .dj-pv2-view .dj-pv2-mast > img.dj-pv2-logo {width:160px!important;min-width:160px!important;max-width:160px!important;}
+}

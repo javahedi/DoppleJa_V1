@@ -1,0 +1,55 @@
+/* DoppleJa Login V2 enhancement */
+.dj-login-v2{
+  min-height:100%;
+  padding:24px clamp(18px, 4vw, 40px) 36px;
+  background:linear-gradient(180deg,#fcfcff 0%,#ffffff 55%,#fbfbff 100%);
+  color:#1f1456;
+}
+.dj-login-top{
+  display:grid;
+  grid-template-columns:40px 1fr 40px;
+  align-items:center;
+  margin-bottom:10px;
+}
+.dj-auth-back{appearance:none;border:0;background:transparent;color:#24105f;font-size:46px;line-height:1;padding:0;width:40px;height:40px;cursor:pointer;}
+.dj-auth-brand{justify-self:center;}
+.dj-auth-logo{width:min(320px,70vw);height:auto;display:block;}
+.dj-login-hero{margin:10px auto 4px;width:min(100%,760px);}
+.dj-login-hero img{display:block;width:100%;height:auto;}
+.dj-login-copy{text-align:center;max-width:760px;margin:0 auto 26px;}
+.dj-login-copy h1{margin:0 0 10px;font-size:clamp(2.1rem,5vw,4.1rem);line-height:1.06;font-weight:800;letter-spacing:-0.03em;color:#24105f;}
+.dj-login-copy p{margin:0;font-size:clamp(1.02rem,2.5vw,1.55rem);line-height:1.45;color:#7b79a1;font-weight:600;}
+.dj-auth-form.dj-auth-form{width:min(100%,860px);margin:0 auto;}
+.dj-auth-stack{display:grid;gap:16px;}
+.dj-auth-field{display:grid;grid-template-columns:54px 1fr 54px;align-items:center;min-height:76px;padding:0 18px;border:2px solid #e3def7;border-radius:22px;background:#fff;box-shadow:0 8px 24px rgba(74,32,160,.03);}
+.dj-auth-field input{width:100%;border:0;outline:none;background:transparent;font-size:1.1rem;font-weight:600;color:#24105f;padding:12px 0;}
+.dj-auth-field input::placeholder{color:#9a97b6;font-weight:500;}
+.dj-auth-icon,.dj-auth-toggle{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;color:#271262;}
+.dj-auth-toggle{margin-left:auto;border:0;background:transparent;cursor:pointer;padding:0;opacity:.65;}
+.dj-auth-meta{display:flex;justify-content:flex-end;margin-top:2px;}
+.dj-auth-text-link{appearance:none;border:0;background:transparent;padding:0;color:#6627e7;font-weight:700;font-size:1.02rem;cursor:pointer;}
+.dj-auth-submit{width:100%;display:flex;align-items:center;justify-content:center;gap:18px;min-height:86px;margin-top:18px;border:0;border-radius:22px;background:linear-gradient(90deg,#5d20e6 0%, #7b35f3 100%);color:#fff;font-size:1.2rem;font-weight:800;box-shadow:0 18px 34px rgba(98,43,230,.22);cursor:pointer;}
+.dj-auth-submit-arrow{font-size:2rem;line-height:1;transform:translateY(-1px);}
+.dj-auth-divider{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;color:#8a86a9;font-size:1rem;font-weight:700;margin:26px 0 18px;}
+.dj-auth-divider::before,.dj-auth-divider::after{content:"";height:2px;background:#ebe7f8;border-radius:99px;}
+.dj-auth-alt-actions{display:grid;gap:14px;}
+.dj-auth-alt-btn{min-height:78px;display:flex;align-items:center;justify-content:center;gap:16px;width:100%;border:2px solid #e3def7;border-radius:20px;background:#fff;color:#20115d;font-size:1.08rem;font-weight:700;cursor:pointer;}
+.dj-auth-google,.dj-auth-apple{width:34px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:2rem;line-height:1;}
+.dj-auth-google{font-family:Arial,Helvetica,sans-serif;color:#4285f4;}
+.dj-auth-footer{margin-top:28px;padding-top:26px;border-top:2px solid #ece8f9;text-align:center;color:#9692b2;font-size:1.02rem;font-weight:700;}
+.dj-auth-register{appearance:none;border:0;background:transparent;padding:0;color:#6627e7;font-size:inherit;font-weight:800;cursor:pointer;}
+@media (max-width: 560px){
+  .dj-login-v2{padding:16px 14px 26px;}
+  .dj-auth-back{font-size:38px;width:34px;height:34px;}
+  .dj-login-top{grid-template-columns:34px 1fr 34px;}
+  .dj-auth-logo{width:min(270px,72vw);}
+  .dj-login-copy{margin-bottom:22px;}
+  .dj-login-copy h1{font-size:2rem;}
+  .dj-login-copy p{font-size:1.02rem;}
+  .dj-auth-field{min-height:66px;border-radius:18px;grid-template-columns:40px 1fr 40px;padding:0 14px;}
+  .dj-auth-field input{font-size:1rem;}
+  .dj-auth-submit{min-height:70px;border-radius:18px;font-size:1.05rem;gap:12px;}
+  .dj-auth-submit-arrow{font-size:1.75rem;}
+  .dj-auth-alt-btn{min-height:64px;border-radius:18px;font-size:1rem;}
+  .dj-auth-google,.dj-auth-apple{font-size:1.8rem;width:28px;}
+}

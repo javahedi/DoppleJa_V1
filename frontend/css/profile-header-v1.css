@@ -1,0 +1,8 @@
+/* Main profile is a tab: no back button, centered logo, logout action on right. */
+.dj-pv2-screen .dj-pv2-mast .dj-pv2-back{display:none!important}
+.dj-pv2-screen .dj-pv2-mast{position:relative;display:flex!important;align-items:center!important;justify-content:center!important;min-height:64px!important}
+.dj-pv2-screen .dj-pv2-mast .dj-pv2-logo{display:block!important;position:static!important;max-width:180px!important;width:180px!important;height:auto!important;max-height:52px!important;object-fit:contain!important;margin:0 auto!important}
+.dj-pv2-screen .dj-pv2-mast .dj-profile-logout{position:absolute!important;right:0!important;top:50%!important;transform:translateY(-50%)!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;width:40px!important;height:40px!important;min-width:40px!important;padding:0!important;border:0!important;border-radius:12px!important;color:#6021d6!important;background:#f4efff!important;cursor:pointer!important;font-size:inherit!important}
+.dj-pv2-screen .dj-pv2-mast .dj-profile-logout svg{width:21px!important;height:21px!important;flex:none!important}
+.dj-pv2-screen .dj-pv2-mast .dj-profile-logout:focus-visible{outline:3px solid #a58bf6!important;outline-offset:3px!important}
+@media(max-width:340px){.dj-pv2-screen .dj-pv2-mast .dj-pv2-logo{width:155px!important}.dj-pv2-screen .dj-pv2-mast .dj-profile-logout{width:38px!important;height:38px!important;min-width:38px!important}}

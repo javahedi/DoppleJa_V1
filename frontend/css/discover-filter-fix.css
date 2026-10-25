@@ -1,0 +1,56 @@
+/* DoppleJa Discover V2: icon-only filter toggle, scoped to Discover. */
+.djv2-discover .djv2-filter-row { min-width:0; }
+.djv2-discover .djv2-search { min-width:0; flex:1 1 0%; }
+.djv2-discover .djv2-filter-toggle {
+  box-sizing:border-box;
+  flex:0 0 46px;
+  width:46px;
+  min-width:46px;
+  height:46px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  padding:0;
+  margin:0;
+  border:1px solid #ece7fb;
+  border-radius:13px;
+  background:#f5f2ff;
+  color:transparent;
+  font-size:0;
+  line-height:0;
+  cursor:pointer;
+  -webkit-appearance:none;
+  appearance:none;
+}
+.djv2-discover .djv2-filter-toggle::before {
+  content:"";
+  display:block;
+  width:22px;
+  height:22px;
+  flex:0 0 22px;
+  background-color:#5e21d5;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h9M17 7h3M4 17h3m4 0h9'/%3E%3Ccircle cx='15' cy='7' r='2'/%3E%3Ccircle cx='9' cy='17' r='2'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h9M17 7h3M4 17h3m4 0h9'/%3E%3Ccircle cx='15' cy='7' r='2'/%3E%3Ccircle cx='9' cy='17' r='2'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+/* Keep the label available to assistive technology without affecting layout. */
+.djv2-discover .djv2-filter-toggle .sr-only {
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important;
+}
+.djv2-discover .djv2-filter-toggle[aria-expanded="true"] {
+  background:#ebe2ff;
+  border-color:#7844df;
+}
+.djv2-discover .djv2-filter-toggle:focus-visible {
+  outline:3px solid #985af3;
+  outline-offset:2px;
+}
