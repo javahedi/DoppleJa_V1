@@ -27,7 +27,7 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 SECURE_PAGE_HEADERS = {
     "Cache-Control": "no-store",
-    "Referrer-Policy": "no-referrer",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
     "X-Content-Type-Options": "nosniff",
     "Content-Security-Policy": (
         "default-src 'none'; "
@@ -130,7 +130,7 @@ def _verification_page(
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="referrer" content="no-referrer">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>{escape(title)} · DoppleJa</title>
 <style>
 :root{{color-scheme:dark}}

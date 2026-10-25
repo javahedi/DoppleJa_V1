@@ -63,7 +63,7 @@ def test_verification_get_does_not_consume_token(confirmation_account):
         assert page.status_code == 200
         assert "text/html" in page.headers["content-type"]
         assert page.headers["cache-control"] == "no-store"
-        assert page.headers["referrer-policy"] == "no-referrer"
+        assert page.headers["referrer-policy"] == "strict-origin-when-cross-origin"
 
         parser = ConfirmationFormParser()
         parser.feed(page.text)
