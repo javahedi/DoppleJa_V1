@@ -1,0 +1,25 @@
+/* Isolated account creation step; existing login and profile page unaffected. */
+.dj-account-create{box-sizing:border-box;padding:18px clamp(16px,4vw,34px) 34px;background:#fff;min-height:100%;color:#241050;}
+.dj-account-create *{box-sizing:border-box}
+.dj-account-head{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;min-height:72px;gap:8px}
+.dj-account-head img{width:min(190px,100%);height:auto;display:block;justify-self:center}
+.dj-account-back{display:grid;place-items:center;border:0;background:#f4efff;color:#32116d;border-radius:12px;width:40px;height:40px;font-size:31px;cursor:pointer}
+.dj-account-hero{padding:24px 0 15px}
+.dj-account-label{font-size:11px;letter-spacing:.1em;font-weight:800;color:#6826df}
+.dj-account-hero h1{font-size:clamp(28px,6vw,36px);line-height:1.12;letter-spacing:-.035em;margin:12px 0 9px;color:#241050}
+.dj-account-hero p{color:#777396;font-size:15px;line-height:1.5;margin:0 0 22px}
+.dj-account-role{display:flex;gap:10px;align-items:center;padding:12px;border-radius:16px;background:#f5f0ff;min-width:0}
+.dj-account-role-icon{display:grid;place-items:center;border-radius:12px;background:#6a24df;color:#fff;width:40px;height:40px;font-size:21px;flex:0 0 auto}
+.dj-account-role strong{font-size:14px;min-width:0}
+.dj-account-role button{margin-left:auto;border:0;background:transparent;color:#6420db;font-size:12px;font-weight:750;cursor:pointer}
+.dj-account-form{display:grid;gap:16px;margin:20px 0 0}
+.dj-account-form label{display:grid;gap:8px;font-weight:750;font-size:14px;color:#241050}
+.dj-account-form label small{font-weight:400;color:#84809d}
+.dj-account-form input:not([type=hidden]){width:100%;min-width:0;height:54px;border:1px solid #ddd6f6;border-radius:14px;padding:0 14px;font:inherit;font-weight:500;background:white;color:#241050}
+.dj-account-form input:focus-visible,.dj-account-create button:focus-visible{outline:2px solid #6a24df;outline-offset:2px}
+.dj-account-note{font-size:12px;line-height:1.5;color:#777396;margin:0}
+.dj-account-submit{width:100%;min-height:56px;background:linear-gradient(100deg,#6121d8,#742af0);border:0;color:white;font-weight:800;font-size:16px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:14px;cursor:pointer}
+.dj-account-submit span{font-size:23px;line-height:1}
+.dj-account-footer{text-align:center;font-size:13px;color:#777396;margin-top:25px}
+.dj-account-footer button{border:0;background:transparent;color:#6020d9;font-weight:800;cursor:pointer}
+@media(max-width:360px){.dj-account-create{padding-inline:14px}.dj-account-head img{max-width:165px}}
