@@ -34,6 +34,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: doppleja-v1-api
+
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -43,6 +44,7 @@ services:
       AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
       AUTH_DEV_PRINT_LINK: ${AUTH_DEV_PRINT_LINK:-false}
       PUBLIC_API_URL: ${PUBLIC_API_URL:-http://127.0.0.1:8001}
+      MEDIA_ROOT: /app/data/media
       
     ports:
       - "127.0.0.1:8001:8000"
@@ -50,6 +52,7 @@ services:
       - ./backend:/code/backend
       - ./frontend:/code/frontend:ro
       - ./tests:/code/tests:ro
+      - doppleja_media:/app/data/media
     command:
       - uvicorn
       - backend.app.main:app
@@ -69,5 +72,6 @@ services:
         condition: service_healthy
 
 volumes:
-  pgdata:
-  redisdata:
+    pgdata:
+    redisdata:
+    doppleja_media:

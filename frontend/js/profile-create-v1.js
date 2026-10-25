@@ -38,10 +38,9 @@
       <div class="dj-pc-progress"><span class="dj-pc-active">1</span><i></i><span>Profil</span></div>
       <section class="dj-pc-hero"><div><h1>${worker?'Erzähl uns etwas über dich':'Stell dich kurz vor'}</h1><p>${worker?'So können Arbeitgeber dich besser kennenlernen.':'So können passende Mitarbeiter dich und deinen Bedarf kennenlernen.'}</p></div><img src="/app-assets/assets/profile/${src}" alt="${worker?'Illustration eines Lieferfahrers':'Illustration eines privaten Arbeitgebers'}"></section>
       <div class="dj-pc-panel">
-        <div class="dj-pc-photo"><div class="dj-pc-avatar" aria-hidden="true">◉</div><div><strong>Profilbild <span>(optional)</span></strong><small>Ein eigenes Foto kannst du später ergänzen. Derzeit unterstützt V1 nur eine Bild-URL.</small></div></div>
+        <div class="dj-pc-photo"><div class="dj-pc-avatar" aria-hidden="true">◉</div><div><strong>Profilbild <span>(optional)</span></strong><small>Wähle ein Foto für die Vorschau. Dauerhaftes Speichern aktivieren wir mit dem Upload-Service.</small></div></div>
         <form id="profile-form" class="dj-pc-form">
           ${fields}
-          <details class="dj-pc-extra"><summary>Foto-URL hinzufügen (optional)</summary>${input('Bildadresse','photo_url','https://…',original.photo_url||'',false,'url')}</details>
           <button class="dj-pc-submit" type="submit">Profil speichern <span aria-hidden="true">→</span></button>
         </form>
       </div>`;

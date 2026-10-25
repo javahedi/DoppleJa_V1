@@ -1,3 +1,5 @@
+from backend.app.modules.moderation.router import router as moderation_router
+from backend.app.modules.media.router import router as media_router
 from backend.app.modules.likes.employer_likes_v3 import router as employer_likes_v3_router
 from backend.app.core.auth_protection import AuthProtectionMiddleware
 from backend.app.modules.frontend.router import router as frontend_router, assets as frontend_assets
@@ -21,6 +23,8 @@ from backend.app.modules.completions.router import router as completion_router
 app = FastAPI(title="DoppleJa API", description="Two sides. Two Yes. One Match.", version="1.0.0")
 app.add_middleware(AuthProtectionMiddleware)
 app.include_router(auth_router)
+app.include_router(media_router)
+app.include_router(moderation_router)
 app.include_router(completion_router)
 app.include_router(match_summaries_router)
 app.include_router(likes_router)

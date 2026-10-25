@@ -1,0 +1,16 @@
+.dj-report-link{display:block;margin:12px 0 0 auto;padding:9px 5px;border:0;background:transparent;color:#725c88;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font:inherit;font-size:.82rem}
+.dj-report-link:hover,.dj-report-link:focus-visible{color:#5e21bb}
+.dj-report-overlay{position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;background:rgba(16,9,32,.7);padding:16px}
+.dj-report-panel{width:min(100%,430px);max-height:calc(100dvh - 32px);overflow:auto;box-sizing:border-box;border-radius:20px;background:#fff;color:#241638;padding:24px;box-shadow:0 20px 70px rgba(0,0,0,.28)}
+.dj-report-panel h2{font-size:1.4rem;line-height:1.3;margin:0 0 8px}
+.dj-report-note{color:#5d5269;line-height:1.5;margin:0 0 20px;font-size:.93rem}
+.dj-report-form{display:grid;gap:9px}
+.dj-report-form label{font-size:.9rem;font-weight:650;margin-top:6px}
+.dj-report-form select,.dj-report-form textarea{font:inherit;box-sizing:border-box;width:100%;padding:11px;border:1px solid #bdb0cc;border-radius:10px;background:white;color:#241638}
+.dj-report-form select:focus-visible,.dj-report-form textarea:focus-visible,.dj-report-actions button:focus-visible{outline:3px solid #d7b0ff;outline-offset:2px}
+.dj-report-status{font-size:.9rem;min-height:1.4em;color:#4d385d;margin:5px 0}
+.dj-report-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:4px}
+.dj-report-actions button{font:inherit;border-radius:10px;padding:11px 15px;cursor:pointer}
+.dj-report-cancel{background:white;border:1px solid #bbb0c9;color:#3e3150}
+.dj-report-submit{background:#6422d4;border:1px solid #6422d4;color:white;font-weight:650}
+.dj-report-submit:disabled{opacity:.6;cursor:wait}

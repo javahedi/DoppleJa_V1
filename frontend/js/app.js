@@ -172,8 +172,7 @@
       ${field('Name / Betrieb','display_name',p.display_name||'','required minlength="2"')}
       ${field('Bereich (optional)','category',p.category||'')}${field('Stadt','city',p.city||'')}
       ${textarea('Kurzbeschreibung','description',p.description||'')}`}
-      ${field('Foto-/Logo-URL (optional)','photo_url',p.photo_url||'','type="url"')}
-      <p class="dj-small-note">Ohne eigenes Foto verwenden wir ein deutlich gekennzeichnetes Symbolbild.</p>
+      <p class="dj-small-note">Dein Profilfoto kannst du über „Foto ändern“ oberhalb des Profils bearbeiten. Bis zur Aktivierung des Uploads ist dies nur eine Vorschau.</p>
       <button class="btn" type="submit">Profil speichern →</button></form></section>`, 'profile'));
   }
     async function loadCategories(){if(!state.categories.length)state.categories=await api('/api/categories');}

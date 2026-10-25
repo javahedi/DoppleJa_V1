@@ -33,10 +33,10 @@ def save_my_profile(
 ):
     profile = db.get(EmployerProfile, user.id)
     if profile is None:
-        profile = EmployerProfile(user_id=user.id, **body.model_dump())
+        profile = EmployerProfile(user_id=user.id, **body.model_dump(exclude={"photo_url"}))
         db.add(profile)
     else:
-        for key, value in body.model_dump().items():
+        for key, value in body.model_dump(exclude={"photo_url"}).items():
             setattr(profile, key, value)
     db.commit()
     db.refresh(profile)
