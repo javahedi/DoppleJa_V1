@@ -42,15 +42,14 @@
       case 'conversation':return conversationView();case 'job-create':return jobFormView();
       case 'my-jobs':return myJobsView();case 'settings':return settingsView();default: return home();}});}
 
-  function home(){render(`<section class="splash premium-welcome"><div class="premium-welcome-glow"></div>
-    <div class="pw-content"><div class="pw-overline">WILLKOMMEN BEI</div><h1 class="brand">DoppleJa<span class="pw-dot">.
-    </span></h1><p class="tagline">Zwei Seiten. Zwei Ja. Ein Match.</p><div class="pw-art" aria-hidden="true">
-    <div class="pw-person pw-person-left"><img src="/app-assets/assets/worker-card.jpg" alt=""></div>
-    <div class="pw-center"><span>🤝</span></div><div class="pw-person pw-person-right"><img src="/app-assets/assets/employer-card.jpg" alt=""></div>
-    <span class="pw-star one">✦</span><span class="pw-star two">♥</span><span class="pw-star three">✦</span></div></div>
-    <div class="splash-actions pw-actions"><button class="btn yellow" data-go="register">Los geht’s <span aria-hidden="true">→</span></button>
-    <button class="btn outline" data-go="login">Ich habe schon ein Konto</button>
-    <p class="center pw-caption">Finde Menschen. Entdecke Arbeit. Einfach matchen.</p></div></section>`);}
+  function home(){render(`<section class="splash dj-welcome-v2" aria-label="DoppleJa Willkommen">
+    <header class="dj-welcome-header"><img src="/app-assets/assets/brand/doppleja-logo.svg" alt="DoppleJa" class="dj-welcome-logo"></header>
+    <div class="dj-welcome-body"><img class="dj-welcome-hero" src="/app-assets/assets/images/onboarding/hero-professions.webp" alt="Menschen aus Gastronomie, Pflege, Handwerk, Transport und Reinigung finden zueinander" width="887" height="990" fetchpriority="high">
+      <div class="dj-welcome-copy"><h1>Viele Berufe.<br><span>Ein Match.</span></h1><p>Jobs finden. Mitarbeiter finden.<br>Einfach matchen.</p></div>
+    </div>
+    <div class="dj-welcome-actions"><button type="button" class="dj-welcome-button dj-welcome-primary" data-go="register">Registrieren <span aria-hidden="true">›</span></button>
+    <button type="button" class="dj-welcome-button dj-welcome-secondary" data-go="login">Einloggen <span aria-hidden="true">›</span></button></div>
+  </section>`);}
   function loginView(){render(`<section class="screen premium-auth"><button class="back" data-go="home">← Zurück</button>
     <div class="pa-kicker">DOPPLEJA · WILLKOMMEN ZURÜCK</div><h1 class="title topspace">Schön, dass du da bist! <span class="pa-yellow">✦</span></h1>
     <p class="subtitle">Einloggen und dort weitermachen, wo dein Match wartet.</p><div class="pa-login-decoration" aria-hidden="true">🤝</div>

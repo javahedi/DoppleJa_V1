@@ -1,0 +1,21 @@
+/* Welcome V2 — scoped so registration, login, and other pages stay unchanged. */
+.dj-welcome-v2 {--dj-w-purple:#6326d6; --dj-w-gold:#ffb51b; position:relative; background:#fff!important; color:#21104e!important; padding:26px 22px calc(24px + env(safe-area-inset-bottom))!important; min-height:100dvh; display:flex; flex-direction:column; justify-content:space-between; align-items:stretch; gap:10px; overflow:hidden; }
+.dj-welcome-v2::before {content:"";pointer-events:none;position:absolute;inset:auto -35% -25% -35%;height:48%;background:radial-gradient(ellipse,#fff1ce5c 0%,transparent 65%)}
+.dj-welcome-v2 .dj-welcome-header {display:flex;justify-content:center;align-items:center; flex:0 0 auto; position:relative;z-index:1}
+.dj-welcome-logo {display:block;width:min(250px,72%);height:auto;}
+.dj-welcome-body {position:relative;z-index:1; flex:1 1 auto; min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;}
+.dj-welcome-hero {width:min(100%,430px);height:auto;max-height:min(57dvh,560px);object-fit:contain;display:block;}
+.dj-welcome-copy {text-align:center;margin:3px auto 4px;}
+.dj-welcome-copy h1 {margin:0;color:#20104c;font-size:clamp(27px,7.8vw,40px);font-weight:850;letter-spacing:-.045em;line-height:1.11;}
+.dj-welcome-copy h1 span {color:var(--dj-w-gold)}
+.dj-welcome-copy p {margin:10px 0 0;color:#77718e;font-size:clamp(12px,3.35vw,15px);line-height:1.45;font-weight:500;}
+.dj-welcome-actions {position:relative;z-index:1;display:grid;gap:10px;flex:0 0 auto;}
+.dj-welcome-button {position:relative;display:flex;align-items:center;justify-content:center;min-height:55px;border-radius:15px;font-size:16px;font-weight:800;border:2px solid var(--dj-w-purple);width:100%;transition:transform .15s,box-shadow .15s;}
+.dj-welcome-button span {position:absolute;right:18px;font-size:29px;line-height:1;font-weight:400;top:50%;transform:translateY(-55%)}
+.dj-welcome-primary {background:linear-gradient(100deg,#6530da,#5520c8);color:white;box-shadow:0 7px 18px #6026d521;}
+.dj-welcome-secondary {background:#fff;color:#6026cf;}
+.dj-welcome-button:active {transform:scale(.99)}
+.dj-welcome-button:focus-visible {outline:3px solid #fdb921;outline-offset:3px}
+@media(min-width:650px) {.dj-welcome-v2 {min-height:calc(100dvh - 48px);padding:27px 26px 24px!important} .dj-welcome-hero {max-height:min(52dvh,515px)}}
+@media(max-height:740px) {.dj-welcome-v2 {padding-top:16px!important;padding-bottom:14px!important;gap:5px}.dj-welcome-logo {width:190px}.dj-welcome-hero {max-height:45dvh}.dj-welcome-copy h1 {font-size:27px}.dj-welcome-copy p {margin-top:6px}.dj-welcome-button {min-height:48px}}
+@media(prefers-reduced-motion:reduce) {.dj-welcome-button {transition:none}}
