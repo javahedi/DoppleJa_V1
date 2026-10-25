@@ -88,29 +88,34 @@
     </section>`);
   }
   function registerView(){
-    const cards=[['restaurant-cafe','Gastronomie','cafe-card.jpg'],['handwerker','Handwerk','craft-card.jpg'],
-    ['hospital-care','Gesundheit','hospital-card.jpg'],['cleaning','Reinigung','cleaning-card.jpg'],['drivers-logistics','Logistik','logistics-card.jpg']];
-    const interests=cards.map(([key,label,img])=>`<label class="pa-interest"><input type="checkbox" name="interest" value="${key}">
-    <img src="/app-assets/assets/${img}" alt=""><span>${label}</span></label>`).join('');
-    render(`<section class="screen premium-auth premium-register"><button class="back" data-go="register">← Zurück</button>
-      <div class="pa-progress"><span class="pa-progress-on"></span><span></span><span></span></div><div class="pa-kicker">DEIN START IN DOPPLEJA</div>
-      <h1 class="title topspace">Wer bist du?</h1><p class="subtitle">Zwei Seiten. Ein Ziel: das passende Match.</p><form class="form" id="register-form">
-      <div class="pa-role-cards"><label class="pa-role"><input type="radio" name="role" value="worker" required ${state.registrationRole==='worker'?'checked':''}>
-      <img src="/app-assets/assets/worker-card.jpg" alt="Servicekraft"><span class="pa-role-copy"><strong>Ich suche einen Job</strong>
-      <small>Entdecke Arbeit, die zu dir passt.</small></span><span class="pa-select-arrow">→</span></label><label class="pa-role">
-      <input type="radio" name="role" value="employer" ${state.registrationRole==='employer'?'checked':''}><img src="/app-assets/assets/employer-card.jpg" alt="Arbeitgeber">
-      <span class="pa-role-copy"><strong>Ich suche Personal</strong><small>Privatperson oder Unternehmen.</small></span>
-      <span class="pa-select-arrow">→</span></label></div><div class="pa-interest-section"><div class="pa-section-heading">
-      <strong>Was interessiert dich?</strong><small>Optional · bis zu 3 Bereiche</small></div><div class="pa-interests">${interests}</div>
-      <p class="pa-tiny">Die Auswahl hilft beim Einstieg. Persönliche Interessen speichern wir erst in einer späteren Profilphase.</p></div>
-      <div class="pa-credentials"><div class="pa-section-heading"><strong>Fast geschafft!</strong><small>Konto erstellen</small></div>
-      ${field('E-Mail','email','','type="email" required autocomplete="email"')}${field('Passwort (mindestens 10 Zeichen)','password','',
-        'type="password" required minlength="10" autocomplete="new-password"')}</div><button class="btn pa-primary" type="submit">Konto erstellen →</button>
-        </form><p class="center"><button class="link-btn" data-go="login">Schon dabei? Einloggen</button></p></section>`);
-
-    root.querySelectorAll('.pa-interest input').forEach(input=>input.addEventListener('change',
-      ()=>{const selected=root.querySelectorAll('.pa-interest input:checked');if(selected.length>3)
-        {input.checked=false;toast('Bitte höchstens 3 Bereiche wählen.');}}));
+    const worker=state.registrationRole==='worker';
+    const role=worker?'worker':'employer';
+    const heading=worker?'Arbeit finden':'Mitarbeiter finden';
+    const hint=worker?'Erstelle dein Konto, um passende Jobs zu entdecken.':'Erstelle dein Konto, um passende Mitarbeiter zu finden.';
+    render(`<section class="screen dj-account-create" aria-label="Konto erstellen">
+      <header class="dj-account-head">
+        <button type="button" class="dj-account-back" data-go="register" aria-label="Zurück zur Auswahl">‹</button>
+        <img src="/app-assets/assets/brand/doppleja-logo.svg" alt="DoppleJa" width="190" height="66">
+        <span aria-hidden="true"></span>
+      </header>
+      <div class="dj-account-hero">
+        <div class="dj-account-label">${worker?'ARBEITNEHMER':'ARBEITGEBER'} · REGISTRIERUNG</div>
+        <h1>Konto erstellen</h1>
+        <p>${hint}</p>
+        <div class="dj-account-role"><span class="dj-account-role-icon" aria-hidden="true">${worker?'♙':'▣'}</span><strong>${heading}</strong>
+          <button type="button" data-go="register">Ändern</button></div>
+      </div>
+      <form class="dj-account-form" id="register-form">
+        <input type="hidden" name="role" value="${role}">
+        <label>E-Mail-Adresse
+          <input name="email" type="email" autocomplete="email" placeholder="name@beispiel.de" required maxlength="254"></label>
+        <label>Passwort <small>(mindestens 10 Zeichen)</small>
+          <input name="password" type="password" autocomplete="new-password" placeholder="Dein Passwort" required minlength="10"></label>
+        <p class="dj-account-note">Nach der Registrierung bestätigst du deine E-Mail-Adresse. Danach kannst du dein Profil erstellen.</p>
+        <button class="dj-account-submit" type="submit">Konto erstellen <span aria-hidden="true">→</span></button>
+      </form>
+      <div class="dj-account-footer">Schon ein Konto? <button type="button" data-go="login">Einloggen</button></div>
+    </section>`);
   }
   function verifyView(){render(`<section class="screen premium-auth pa-verify">
     <div class="pa-verify-icon">✉️</div><h1 class="title">Jetzt E-Mail bestätigen</h1>
